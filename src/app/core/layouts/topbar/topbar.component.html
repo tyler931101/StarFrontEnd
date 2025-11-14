@@ -1,0 +1,26 @@
+<header class="topbar" *ngIf="user()">
+    <div class="left">
+        <span class="brand" (click)="navigate('/')">🌟 StarApp</span>
+
+        <nav class="nav-links">
+            <a *ngIf="user()?.role === 'Admin'" routerLink="/admin" routerLinkActive="active">Admin Dashboard</a>
+            <a routerLink="/tickets" routerLinkActive="active">Tickets</a>
+            <a routerLink="/chat" routerLinkActive="active">Chat</a>
+        </nav>
+    </div>
+
+    <div class="right">
+        <div class="avatar-menu" (click)="toggleDropdown()">
+            <img src="https://ui-avatars.com/api/?name={{ user()?.name }}" class="avatar" alt="avatar" />
+            <div class="dropdown" *ngIf="dropdownOpen()">
+                <div class="info">
+                    <strong>{{ user()?.name }}</strong>
+                    <small>{{ user()?.role }}</small>
+                </div>
+                <hr />
+                <a (click)="goProfile()">Profile</a>
+                <a (click)="logout()">Logout</a>
+            </div>
+        </div>
+    </div>
+</header>

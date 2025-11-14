@@ -1,26 +1,37 @@
 import { Routes } from '@angular/router';
 import { CanActivate } from '@angular/router';
-import { AuthGuard } from './core/auth/viewmodels/auth.guard';
-import { RoleGuard } from './core/auth/viewmodels/role.guard';
+import { AuthGuard } from './core/guards/auth.guard';
+import { RoleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
     {
         path: 'login',
         // canActivate: [AuthGuard, RoleGuard],
         // data: {roles: ["User", "Amdin"]},
-        loadComponent: () => import('./core/auth/views/login/login.component').then(m => m.LoginComponent)
+        loadComponent: () => import('./features/auth/views/login/login.component').then(m => m.LoginComponent)
     },
     {
         path: 'register',
-        loadComponent: () => import('./core/auth/views/register/register.component').then(m => m.RegisterComponent)
+        loadComponent: () => import('./features/auth/views/register/register.component').then(m => m.RegisterComponent)
     },
     {
         path: 'unauthorized',
-        loadComponent: () => import('./core/auth/views/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
+        loadComponent: () => import('./features/auth/views/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
     },
     {
         path: 'verify-email',
-        loadComponent: () => import('./core/auth/views/verify-email/verify-email.component').then(m => m.VerifyEmailComponent)
+        loadComponent: () => import('./features/auth/views/verify-email/verify-email.component').then(m => m.VerifyEmailComponent)
     },
-    { path: '', redirectTo: 'login', pathMatch: 'full' }
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+
+    {
+        path: '',
+        loadComponent: () => import('./core/layouts/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
+        children: [
+            {
+                path: 'tickets',
+                loadComponent: () => import('./features/tickets/views/ticket/ticket.component').then(m => m.TicketComponent)
+            },
+        ]
+    }
 ];
