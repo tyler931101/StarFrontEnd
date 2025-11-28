@@ -4,15 +4,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
-
-import { App } from './app';
+import { AppComponent } from './app.component';  // Import AppComponent as a standalone component
 import { CoreModule } from './core/core.module';
 import { routes } from './app.routes';
-import { LayoutModule } from './core/layouts/layout.module';
 
 @NgModule({
   imports: [
-    App,
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
@@ -24,8 +21,7 @@ import { LayoutModule } from './core/layouts/layout.module';
       progressBar: true
     }),
     CoreModule,
-    LayoutModule
   ],
-  bootstrap: [App]
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

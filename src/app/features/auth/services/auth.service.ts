@@ -47,15 +47,16 @@ export class AuthService {
 
   // --- Route user based on their role
   private redirectByRole(role: string) {
-    switch (role) {
-      case 'Admin':
-        this.router.navigate(['/admin']);
-        break;
-      case 'User':
-      default:
-        this.router.navigate(['/tickets']);
-        break;
-    }
+    // switch (role) {
+    //   case 'Admin':
+    //     this.router.navigate(['/admin']);
+    //     break;
+    //   case 'User':
+    //   default:
+    //     this.router.navigate(['/landing']);
+    //     break;
+    // }
+    this.router.navigate(['/landing']);
   }
 
   // --- Refresh access token

@@ -1,6 +1,6 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { importProvidersFrom } from '@angular/core';
-import { App } from './app/app';
+import { AppComponent } from './app/app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { RouterModule } from '@angular/router';
@@ -8,7 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { routes } from './app/app.routes';
 import { CoreModule } from './app/core/core.module';
 
-bootstrapApplication(App, {
+bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(
       BrowserAnimationsModule,

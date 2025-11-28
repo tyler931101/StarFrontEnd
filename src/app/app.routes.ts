@@ -29,8 +29,12 @@ export const routes: Routes = [
         loadComponent: () => import('./core/layouts/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
         children: [
             {
+                path: 'landing',
+                loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
+            },
+            {
                 path: 'tickets',
-                loadComponent: () => import('./features/tickets/views/ticket/ticket.component').then(m => m.TicketComponent)
+                loadComponent: () => import('./features/tickets/ticket.component').then(m => m.TicketComponent)
             },
         ]
     }

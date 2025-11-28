@@ -1,2 +1,24 @@
-<app-topbar></app-topbar>
-<router-outlet></router-outlet>
+<div class="main-layout">
+    <header class="topbar">
+        <div class="left">
+            <span class="brand">
+                <img class="logo" src="logo.png" alt="logo"/>
+            </span>
+
+            <nav class="nav-links">
+                <a routerLink="/tickets" routerLinkActive="active">Tickets</a>
+                <a routerLink="/chat" routerLinkActive="active">Chat</a>
+            </nav>
+        </div>
+
+        <div class="right">
+            <div class="avatar-menu" (click)="toggleDropdown()">
+                <div *ngIf="isDropdownvisible" class="dropdown">
+                    <a>Profile</a>
+                    <a>Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <router-outlet></router-outlet>
+</div>

@@ -6,9 +6,9 @@ import { HttpClientModule } from '@angular/common/http';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, HttpClientModule],
-  templateUrl: './app.html',
-  styleUrls: ['./app.css']
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-export class App {
+export class AppComponent {
   protected readonly title = signal('StarFrontEnd');
 }

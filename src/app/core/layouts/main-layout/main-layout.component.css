@@ -2,10 +2,103 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background: #f9fafb;
+    background: #fff;
 }
 
 router-outlet {
     flex: 1;
     padding: 20px;
+}
+
+.topbar {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #004457;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+    height: 50px;
+    border-bottom: 2px solid #1f2937;
+}
+
+.topbar .left {
+    display: flex;
+    align-items: center;
+}
+
+.topbar .brand {
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 30px;
+}
+
+.brand {
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.nav-links {
+    display: inline-flex;
+    gap: 1rem;
+}
+
+.nav-links a {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.nav-links a.active {
+    color: #3b82f6;
+}
+
+.avatar-menu {
+    position: relative;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid #3b82f6;
+}
+
+.dropdown {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background: white;
+    color: #111827;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    min-width: 100px;
+}
+
+.dropdown a {
+    padding: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #111827;
+}
+
+.dropdown a:hover {
+    background-color: #f3f4f6;
+    border-radius: 8px;
+}
+
+.logo {
+    height: 40px;
 }
