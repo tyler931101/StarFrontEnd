@@ -29,6 +29,7 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "@coreui/icons-angular": "~5.5.24",
     "jwt-decode": "^4.0.0",
     "jwt-token": "^1.0.9",
     "ngx-toastr": "^19.1.0",

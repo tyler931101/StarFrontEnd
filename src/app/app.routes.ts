@@ -1,41 +1,49 @@
-import { Routes } from '@angular/router';
-import { CanActivate } from '@angular/router';
-import { AuthGuard } from './core/guards/auth.guard';
-import { RoleGuard } from './core/guards/role.guard';
+import { RouterModule, Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { UserRoutingModule } from './shared/routing.module/user.routes';
+import { AdminRoutingModule } from './shared/routing.module/admin.routes';
+import { AuthRoutingModule } from './shared/routing.module/auth.routes';
+import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
 
 export const routes: Routes = [
-    {
-        path: 'login',
-        // canActivate: [AuthGuard, RoleGuard],
-        // data: {roles: ["User", "Amdin"]},
-        loadComponent: () => import('./features/auth/views/login/login.component').then(m => m.LoginComponent)
-    },
-    {
-        path: 'register',
-        loadComponent: () => import('./features/auth/views/register/register.component').then(m => m.RegisterComponent)
-    },
-    {
-        path: 'unauthorized',
-        loadComponent: () => import('./features/auth/views/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
-    },
-    {
-        path: 'verify-email',
-        loadComponent: () => import('./features/auth/views/verify-email/verify-email.component').then(m => m.VerifyEmailComponent)
-    },
     { path: '', redirectTo: 'login', pathMatch: 'full' },
-
+    { 
+        path: '', 
+        loadChildren: () => import('./shared/routing.module/auth.routes').then(m => m.AuthRoutingModule)
+    },
     {
         path: '',
-        loadComponent: () => import('./core/layouts/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
+        component: MainLayoutComponent,
         children: [
             {
                 path: 'landing',
                 loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
             },
             {
-                path: 'tickets',
-                loadComponent: () => import('./features/tickets/ticket.component').then(m => m.TicketComponent)
+                path: 'profile',
+                loadComponent: () => import('./features/auth/views/profile/profile.component').then(m => m.ProfileComponent)
+            },
+            {
+                path: 'user',
+                loadChildren: () => import('./shared/routing.module/user.routes').then(m => m.UserRoutingModule)
+            },
+            {
+                path: 'admin',
+                loadChildren: () => import('./shared/routing.module/admin.routes').then(m => m.AdminRoutingModule)
             },
         ]
-    }
+    },
+    { path: '**', redirectTo: 'login' }
 ];
+
+@NgModule({
+    imports: [
+        RouterModule.forRoot(routes),
+        AuthRoutingModule,
+        UserRoutingModule,
+        AdminRoutingModule
+    ],
+    exports: [RouterModule]
+})
+
+export class AppRoutingModule {}

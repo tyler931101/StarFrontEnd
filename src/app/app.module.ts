@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 import { AppComponent } from './app.component';  // Import AppComponent as a standalone component
 import { CoreModule } from './core/core.module';
-import { routes } from './app.routes';
+import { AppRoutingModule, routes } from './app.routes';
 
 @NgModule({
   imports: [
@@ -21,6 +21,7 @@ import { routes } from './app.routes';
       progressBar: true
     }),
     CoreModule,
+    AppRoutingModule
   ],
   bootstrap: [AppComponent]
 })

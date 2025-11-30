@@ -87,14 +87,14 @@ router-outlet {
     min-width: 100px;
 }
 
-.dropdown a {
+.dropdown div {
     padding: 10px;
     cursor: pointer;
     text-decoration: none;
     color: #111827;
 }
 
-.dropdown a:hover {
+.dropdown div:hover {
     background-color: #f3f4f6;
     border-radius: 8px;
 }

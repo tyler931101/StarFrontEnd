@@ -1,1 +1,8 @@
-<p>landing works!</p>
+<ul *ngIf="links.length; else noLinks">
+    <li *ngFor="let link of links">
+        <a [routerLink]="link.path">{{ link.label }}</a>
+    </li>
+</ul>
+<ng-template #noLinks>
+    <p>No pages configured.</p>
+</ng-template>

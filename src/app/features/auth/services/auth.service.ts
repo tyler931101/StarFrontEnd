@@ -79,40 +79,61 @@ export class AuthService {
   }
 
   // --- Logout user
-  logout(): Observable<any> {
-    return this.api.post('auth/logout', {}).pipe(
-      tap(() => {
-        this.tokenService.clearTokens();
-        this.userState.clearUser();
-        this.router.navigate(['/login']);
-      })
-    );
+  logout() {
+    this.tokenService.clearTokens();
+    this.userState.clearUser();
+    this.router.navigate(['/login']);
   }
 
   // --- Simple getter for login state
   get isLoggedIn(): boolean {
-    return !!this.tokenService.getAccessToken();
-  }
+    const token = this.tokenService.getAccessToken();
+    if (!token) return false;
+
+    try {
+        const decoded = jwtDecode<JwtPayload>(token);
+        const isExpired = decoded.exp ? Date.now() >= decoded.exp * 1000 : true;
+        
+        if (isExpired) {
+            this.tokenService.clearTokens();
+            this.userState.clearUser();
+            return false;
+        }
+        return true;
+    } catch (err) {
+        console.error('Error decoding token', err);
+        this.tokenService.clearTokens();
+        this.userState.clearUser();
+        return false;
+    }
+}
 
   // --- Extract current user's role from token
   get role(): string | null {
     const token = this.tokenService.getAccessToken();
     if (!token) return null;
-
+  
     try {
       const decoded = jwtDecode<JwtPayload>(token);
-      const isExpired = Date.now() >= decoded.exp * 1000;
+      const isExpired = decoded.exp ? Date.now() >= decoded.exp * 1000 : true;
+      
       if (isExpired) {
         console.warn('Token expired, clearing tokens');
         this.tokenService.clearTokens();
+        this.userState.clearUser(); // Also clear user state for consistency
         return null;
       }
       return decoded.role;
     } catch (err) {
       console.error('Error decoding token', err);
       this.tokenService.clearTokens();
+      this.userState.clearUser(); // Also clear user state for consistency
       return null;
     }
+  }
+
+  navigateToProfile() {
+    this.router.navigate(['/profile']);
   }
 
   // --- Get Profile

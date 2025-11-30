@@ -2,20 +2,15 @@
     <header class="topbar">
         <div class="left">
             <span class="brand">
-                <img class="logo" src="logo.png" alt="logo"/>
+                <a href="/landing"><img class="logo" src="logo.png" alt="logo" /></a>
             </span>
-
-            <nav class="nav-links">
-                <a routerLink="/tickets" routerLinkActive="active">Tickets</a>
-                <a routerLink="/chat" routerLinkActive="active">Chat</a>
-            </nav>
         </div>
 
         <div class="right">
             <div class="avatar-menu" (click)="toggleDropdown()">
                 <div *ngIf="isDropdownvisible" class="dropdown">
-                    <a>Profile</a>
-                    <a>Logout</a>
+                    <div (click)="viewProfile(); $event.preventDefault();">Profile</div>
+                    <div (click)="logout(); $event.preventDefault();">Logout</div>
                 </div>
             </div>
         </div>
