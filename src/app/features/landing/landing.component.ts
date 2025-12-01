@@ -13,20 +13,18 @@ import { userRoutes } from '../../shared/routing.module/user.routes';
   styleUrls: ['./landing.component.css'],
 })
 export class LandingComponent implements OnInit {
-  links: { path: string; label: string }[] = [];
+  links: { path: string; label: string, icon: string }[] = [];
 
   constructor(private router: Router, private auth: AuthService) {}
 
   ngOnInit(): void {
     // First check if user is logged in
     if (!this.auth.isLoggedIn) {
-      console.log('User not logged in');
       this.router.navigate(['/login']);
       return;
     }
 
     const userRole = this.auth.role;
-    console.log('User role:', userRole);
     
     // If role is null, something is wrong with the token
     if (!userRole) {
@@ -71,11 +69,10 @@ export class LandingComponent implements OnInit {
         
         return {
           path: fullPath.startsWith('/') ? fullPath : `/${fullPath}`,
-          label: this.getRouteLabel(route)
+          label: this.getRouteLabel(route),
+          icon: this.getRouteIcon(route)
         };
       });
-
-    console.log('Processed links:', this.links);
   }
 
   private isAdminRoute(route: any): boolean {
@@ -93,6 +90,26 @@ export class LandingComponent implements OnInit {
   private getRouteLabel(route: any): string {
     if (route.data && route.data['title']) return route.data['title'];
     if (route.data && route.data['label']) return route.data['label'];
+    if (route.data && route.data['icon']) return route.data['icon'];
     return route.path.charAt(0).toUpperCase() + route.path.slice(1);
+  }
+
+  private getRouteIcon(route: any): string {
+    const iconMap: { [key: string]: string } = {
+      'ticket': 'fas fa-ticket-alt',
+      'chat': 'fas fa-comments',
+      'chart': 'fas fa-chart-bar',
+      'users': 'fas fa-users',
+      'settings': 'fas fa-cog',
+      'admin': 'fas fa-user-shield',
+      'user': 'fas fa-user',
+      'calendar': 'fas fa-calendar'
+    };
+
+    const routeKey = Object.keys(iconMap).find(key => 
+      route.path.includes(key)
+    );
+
+    return routeKey ? iconMap[routeKey]: '';
   }
 }

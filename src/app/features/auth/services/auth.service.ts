@@ -106,7 +106,7 @@ export class AuthService {
         this.userState.clearUser();
         return false;
     }
-}
+  }
 
   // --- Extract current user's role from token
   get role(): string | null {

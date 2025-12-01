@@ -1,8 +1,17 @@
-<ul *ngIf="links.length; else noLinks">
-    <li *ngFor="let link of links">
-        <a [routerLink]="link.path">{{ link.label }}</a>
-    </li>
-</ul>
-<ng-template #noLinks>
-    <p>No pages configured.</p>
-</ng-template>
+<div class="landing-container">
+    <h1>Welcome !</h1>
+    <p>Select an option below to get started:</p>
+
+    <div *ngIf="links.length; else noLinks" class="nav-links">
+        <div *ngFor="let link of links" class="nav-item">
+            <a [routerLink]="link.path" class="nav-link">
+                <i [class]="link.icon" class="nav-icon"></i>
+                <span class="nav-label">{{ link.label }}</span>
+            </a>
+        </div>
+    </div>
+
+    <ng-template #noLinks>
+        <p class="no-links-message">No pages configured for your role.</p>
+    </ng-template>
+</div>

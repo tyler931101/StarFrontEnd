@@ -1,8 +1,6 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { RoleGuard } from "app/core/guards/role.guard";
 import { AuthGuard } from "app/core/guards/auth.guard";
-import { tick } from "@angular/core/testing";
 
 export const userRoutes: Routes = [
     {
@@ -22,6 +20,12 @@ export const userRoutes: Routes = [
         loadComponent: () => import('../../features/chart/chart.component').then(m => m.ChartComponent),
         canActivate: [AuthGuard],
         data: {title: 'Chart'}
+    },
+    {
+        path: 'calendar',
+        loadComponent: () => import('../../features/calendar/calendar.component').then(m => m.CalendarComponent),
+        canActivate: [AuthGuard],
+        data: {title: 'Calendar'}
     },
 ];
 
