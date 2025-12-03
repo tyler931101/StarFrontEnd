@@ -3,16 +3,11 @@ export interface UserDto {
   id: number;
   username: string;
   email: string;
+  password: string;
   role: string;
+  phone?: string;
   isVerified: boolean;
   createdAt: string;
   lastLoginAt?: string;
   isActive: boolean;
-}
-
-// User state for frontend
-export interface UserState {
-  user: UserDto | null;
-  loading: boolean;
-  error: string | null;
 }

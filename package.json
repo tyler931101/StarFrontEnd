@@ -23,10 +23,12 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^20.3.9",
+    "@angular/cdk": "^20.2.14",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
     "@angular/core": "^20.3.0",
     "@angular/forms": "^20.3.0",
+    "@angular/material": "^20.2.14",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
     "@coreui/icons": "^3.0.1",

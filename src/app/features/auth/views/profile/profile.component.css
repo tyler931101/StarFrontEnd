@@ -1,0 +1,308 @@
+.container {
+    padding: 30px 50px;
+    margin: 0 auto;
+    display: flex;
+}
+
+.form-container {
+    width: 50%;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.form-group {
+    margin-bottom: 16px;
+    display: flex;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    width: 200px;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+input:focus {
+    border-color: #0078d7;
+    box-shadow: 0 0 0 3px rgba(0, 120, 215, 0.2);
+}
+
+button {
+    width: 100%;
+    background: #0078d7;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    background: #005fa3;
+}
+/* Avatar Upload Styles */
+.avatar-upload-section {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.avatar-preview {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 4px solid #e8f4ff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
+}
+
+.avatar-preview:hover {
+    border-color: #4f46e5;
+    transform: scale(1.03);
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.2);
+}
+
+.avatar-preview.has-error {
+    border-color: #ef4444;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: white;
+}
+
+.avatar-preview:hover .avatar-overlay {
+    opacity: 1;
+}
+
+.avatar-overlay i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.avatar-overlay span {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.avatar-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #4f46e5;
+    font-size: 2rem;
+}
+
+.avatar-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.btn-upload,
+.btn-remove {
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.btn-upload {
+    background: linear-gradient(135deg, #0078d7 0%, #005fa3 100%);
+    color: white;
+}
+
+.btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.btn-remove {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.btn-remove:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.avatar-info small {
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+/* Form Group Styles (keeping existing) */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-submit {
+    /* background: linear-gradient(135deg, #0078d7 0%, #005fa3 100%); */
+    background: #0078d7;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background: #005fa3;
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-reset {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-reset:hover:not(:disabled) {
+    background: #e5e7eb;
+}
+
+.btn-reset:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Messages */
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.success-message {
+    color: #10b981;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    /* .container {
+        padding: 1rem;
+    }
+
+    .form-container {
+        padding: 1.5rem;
+    } */
+
+    .avatar-preview {
+        width: 120px;
+        height: 120px;
+    }
+
+    .avatar-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-upload,
+    .btn-remove {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+}

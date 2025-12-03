@@ -166,10 +166,17 @@ export class AuthService {
     this.router.navigate(['/profile']);
   }
 
-  // --- Get Profile
-  // getProfile(): Observable<any> {
-  //   return this.api.get('auth/profile').pipe(
-  //     tap((profile: any) => this.)
-  //   )
-  // }
+  getProfile(): Observable<any> {
+    return this.api.get('auth/me');
+  }
+
+  updateProfile(payload: any): Observable<any> {
+    return this.api.put('auth/profile', payload);
+  }
+
+  uploadProfileImage(file: File): Observable<{ imageUrl: string }> {
+    const fd = new FormData();
+    fd.append('file', file);
+    return this.api.post('auth/profile/image', fd);
+  }
 }

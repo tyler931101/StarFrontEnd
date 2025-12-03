@@ -1,1 +1,97 @@
-<p>profile.component works!</p>
+<div class="container">
+    <form class="form-container" #profileForm="ngForm" (ngSubmit)="updateProfile(profileForm)">
+
+        <!-- Avatar Upload Section -->
+        <div class="avatar-upload-section">
+            <div class="avatar-preview" (click)="triggerFileInput()" [ngClass]="{'has-error': imageError}">
+                <img [src]="profileImage" alt="Profile Image" class="profile-image" />
+                <div class="avatar-overlay">
+                    <i class="fas fa-camera"></i>
+                    <span>Change Photo</span>
+                </div>
+                <div class="avatar-loading" *ngIf="isSubmitting && selectedFile">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+
+            <input #fileInput type="file" class="hidden" accept="image/*" (change)="onFileChange($event)" />
+
+            <div class="avatar-controls">
+                <div class="btn-upload" (click)="triggerFileInput()">
+                    <i class="fas fa-pencil"></i>
+                </div>
+                <div class="btn-remove" (click)="removeAvatar()"
+                    *ngIf="profileImage !== 'assets/default-avatar.jpg'">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+
+            <div class="avatar-info">
+                <small>Click image to change. JPG, PNG, GIF up to 5MB.</small>
+            </div>
+
+            <div class="error-message" *ngIf="imageError">
+                {{ imageError }}
+            </div>
+
+            <div class="success-message" *ngIf="saveSuccess && selectedFile">
+                Avatar uploaded successfully!
+            </div>
+        </div>
+
+        <!-- Username -->
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" [(ngModel)]="profileUser.username" #username="ngModel"
+                required minlength="3" maxlength="30" />
+            <div class="error-message" *ngIf="username.invalid && (username.dirty || username.touched)">
+                <span *ngIf="username.errors?.['required']">Username is required</span>
+                <span *ngIf="username.errors?.['minlength']">Minimum 3 characters</span>
+                <span *ngIf="username.errors?.['maxlength']">Maximum 30 characters</span>
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" [(ngModel)]="profileUser.email" #email="ngModel" required
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
+            <div class="error-message" *ngIf="email.invalid && (email.dirty || email.touched)">
+                <span *ngIf="email.errors?.['required']">Email is required</span>
+                <span *ngIf="email.errors?.['pattern']">Please enter a valid email</span>
+            </div>
+        </div>
+
+        <!-- Phone (if exists in your model) -->
+        <div class="form-group" *ngIf="profileUser.phone !== undefined">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" [(ngModel)]="profileUser.phone" #phone="ngModel"
+                pattern="[0-9+\-\s\(\)]{10,}" />
+            <div class="error-message" *ngIf="phone.invalid && (phone.dirty || phone.touched)">
+                Please enter a valid phone number
+            </div>
+        </div>
+
+        <!-- Submit & Reset Buttons -->
+        <div class="form-actions">
+            <button type="submit" class="btn-submit" [disabled]="isSubmitting || profileForm.invalid">
+                <span *ngIf="!isSubmitting">Update</span>
+                <span *ngIf="isSubmitting">Updating...</span>
+            </button>
+
+            <button type="button" class="btn-reset" (click)="reset()" [disabled]="isSubmitting">
+                Reset Changes
+            </button>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div class="success-message" *ngIf="saveSuccess && !selectedFile">
+            Profile updated successfully!
+        </div>
+
+        <div class="error-message" *ngIf="submitError && !imageError">
+            {{ submitError }}
+        </div>
+
+    </form>
+</div>
