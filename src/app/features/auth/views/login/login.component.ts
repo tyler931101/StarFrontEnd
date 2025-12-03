@@ -13,13 +13,15 @@ import { LoginUser } from '../../models/login.model';
 export class LoginComponent {
   loginUser: LoginUser = { email: '', password: '' };
 
-  constructor(private auth: AuthService) {}
+  constructor(
+    private auth: AuthService,
+  ) {}
 
   login(form: NgForm) {
-    if(form.invalid) return;
+    if (form.invalid) return;
     this.auth.login(this.loginUser).subscribe({
-      next: res => console.log('Logged in'),
-      error: err => console.log(err)
+      next: (res) => console.log(''),
+      error: (err) => console.log(err),
     });
   }
 }

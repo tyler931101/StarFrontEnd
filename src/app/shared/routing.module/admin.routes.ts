@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { RoleGuard } from "app/core/guards/role.guard";
 import { AuthGuard } from "app/core/guards/auth.guard";
+import { Title } from "@angular/platform-browser";
 
 export const adminRoutes: Routes = [
     {
@@ -14,25 +15,25 @@ export const adminRoutes: Routes = [
         path: 'settings',
         loadComponent: () => import('../../features/admin/settings/settings.component').then(m => m.SettingsComponent),
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Admin'], title: 'Settings', icon: 'cil-camera' }
+        data: { roles: ['Admin'], title: 'Settings' }
     },
     {
         path: 'ticket',
         loadComponent: () => import('../../features/ticket/ticket.component').then(m => m.TicketComponent),
         canActivate: [AuthGuard],
-        data: {title: 'Tickets', icon: 'cil-camera' }
+        data: {title: 'Tickets' }
     },
     {
         path: 'chat',
         loadComponent: () => import('../../features/chat/chat.component').then(m => m.ChatComponent),
         canActivate: [AuthGuard],
-        data: {title: 'Chat', icon: 'cil-camera'}
+        data: {title: 'Chat'}
     },
     {
         path: 'chart',
         loadComponent: () => import('../../features/chart/chart.component').then(m => m.ChartComponent),
         canActivate: [AuthGuard],
-        data: {title: 'Chart'}
+        data: {title: 'Reports'}
     },
     {
         path: 'calendar',
@@ -40,6 +41,18 @@ export const adminRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {title: 'Calendar'}
     },
+    {
+        path: 'customer',
+        loadComponent: () => import('../../features/admin/customer/customer.component').then(m => m.CustomerComponent),
+        canActivate: [AuthGuard],
+        data: {title: 'Customer'}
+    },
+    {
+        path: 'helper',
+        loadComponent: () => import('../../features/helper/helper.component').then(m => m.HelperComponent),
+        canActivate: [AuthGuard],
+        data: { title: 'Helper' }
+    }
 ];
 
 @NgModule({

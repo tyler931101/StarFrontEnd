@@ -14,6 +14,7 @@ import { userRoutes } from '../../shared/routing.module/user.routes';
 })
 export class LandingComponent implements OnInit {
   links: { path: string; label: string, icon: string }[] = [];
+  userEmail: string | null = null;
 
   constructor(private router: Router, private auth: AuthService) {}
 
@@ -44,6 +45,9 @@ export class LandingComponent implements OnInit {
     }
 
     this.processRoutes(routes);
+
+    // set user email for display
+    this.userEmail = this.auth.email ?? null;
   }
 
   private processRoutes(routes: any[]): void {
@@ -103,7 +107,9 @@ export class LandingComponent implements OnInit {
       'settings': 'fas fa-cog',
       'admin': 'fas fa-user-shield',
       'user': 'fas fa-user',
-      'calendar': 'fas fa-calendar'
+      'calendar': 'fas fa-calendar-alt',
+      'customer': 'fas fa-address-card',
+      'helper': 'fas fa-hands-helping'
     };
 
     const routeKey = Object.keys(iconMap).find(key => 

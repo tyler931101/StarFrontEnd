@@ -1,6 +1,5 @@
-<div class="landing-container">
-    <h1>Welcome !</h1>
-    <p>Select an option below to get started:</p>
+<div class="container">
+    <h1>Welcome<span *ngIf="userEmail"> {{ userEmail }}</span></h1>
 
     <div *ngIf="links.length; else noLinks" class="nav-links">
         <div *ngFor="let link of links" class="nav-item">

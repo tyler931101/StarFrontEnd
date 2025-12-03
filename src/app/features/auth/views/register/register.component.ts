@@ -20,13 +20,10 @@ export class RegisterComponent {
     if(form.invalid || this.registerUser.password !== this.registerUser.confirm) return;
     return this.auth.register(this.registerUser).subscribe({
       next: res => {
-        console.log('register', res);
-        alert(res.message || 'Registration successful. Please check your email to verify your account.');
         form.reset();
       },
       error: err => {
         console.error(err);
-        alert(err.error || 'Registration failed. Try again.');
       }
     })
   }

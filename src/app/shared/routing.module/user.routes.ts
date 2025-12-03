@@ -27,6 +27,12 @@ export const userRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {title: 'Calendar'}
     },
+    {
+        path: 'helper',
+        loadComponent: () => import('../../features/helper/helper.component').then(m => m.HelperComponent),
+        canActivate: [AuthGuard],
+        data: { title: 'Helper' }
+    }
 ];
 
 @NgModule({

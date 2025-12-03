@@ -27,7 +27,7 @@
     <!-- Password -->
     <div class="form-group">
         <label>Password</label>
-        <input type="password" name="password" [(ngModel)]="registerUser.password" required minlength="6" #password="ngModel"
+        <input type="password" name="password" [(ngModel)]="registerUser.password" required minlength="8" #password="ngModel"
             [class.invalid]="password.invalid && password.touched" />
         <div class="error" *ngIf="password.invalid && password.touched">
             <small *ngIf="password.errors?.['required']">Password is required.</small>
