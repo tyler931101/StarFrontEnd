@@ -1,0 +1,22 @@
+<div class="modal-overlay" *ngIf="isVisible" [class.show]="isVisible">
+    <div class="modal-dialog" [class.modal-lg]="size === 'lg'" [class.modal-sm]="size === 'sm'">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ title }}</h5>
+                <button type="button" class="btn-close" (click)="close()"></button>
+            </div>
+            <div class="modal-body">
+                <ng-content></ng-content>
+            </div>
+            <div class="modal-footer" *ngIf="showFooter">
+                <button type="button" class="btn btn-secondary" (click)="close()">
+                    {{ cancelText }}
+                </button>
+                <button type="button" class="btn" [class]="'btn-' + confirmButtonClass" (click)="confirmAction()"
+                    [disabled]="confirmDisabled">
+                    {{ confirmText }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,7 @@
+/* profile.component.css */
 .container {
     padding: 30px 50px;
     margin: 0 auto;
-    display: flex;
 }
 
 .form-container {
@@ -14,52 +14,12 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
-.form-group {
-    margin-bottom: 16px;
-    display: flex;
-}
-
-label {
-    font-weight: 600;
-    margin-bottom: 4px;
-    width: 200px;
-}
-
-input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    outline: none;
-    transition: all 0.2s ease;
-    width: 100%;
-}
-
-input:focus {
-    border-color: #0078d7;
-    box-shadow: 0 0 0 3px rgba(0, 120, 215, 0.2);
-}
-
-button {
-    width: 100%;
-    background: #0078d7;
-    color: white;
-    border: none;
-    padding: 10px;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s ease;
-}
-
-button:hover {
-    background: #005fa3;
-}
 /* Avatar Upload Styles */
 .avatar-upload-section {
-    text-align: center;
     margin-bottom: 2rem;
     padding-bottom: 2rem;
     border-bottom: 1px solid #eee;
+    position: relative;
 }
 
 .avatar-preview {
@@ -159,36 +119,36 @@ button:hover {
     margin-bottom: 0.5rem;
 }
 
-.btn-upload,
-.btn-remove {
+.avatar-remove {
     padding: 0.5rem 1.25rem;
     border-radius: 6px;
     border: none;
-    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     font-size: 0.875rem;
+    min-width: 120px;
 }
 
-.btn-upload {
+.avatar-upload {
     background: linear-gradient(135deg, #0078d7 0%, #005fa3 100%);
     color: white;
 }
 
-.btn-upload:hover {
+.avatar-upload:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
-.btn-remove {
+.avatar-remove {
     background: #f3f4f6;
     color: #6b7280;
 }
 
-.btn-remove:hover {
+.avatar-remove:hover {
     background: #ef4444;
     color: white;
 }
@@ -196,22 +156,101 @@ button:hover {
 .avatar-info small {
     color: #6b7280;
     font-size: 0.75rem;
+    display: block;
+    margin-bottom: 0.5rem;
 }
 
-/* Form Group Styles (keeping existing) */
+/* Form Group Styles */
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
 }
 
+label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    width: 200px;
+    flex-shrink: 0;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+input:focus {
+    border-color: #0078d7;
+    box-shadow: 0 0 0 3px rgba(0, 120, 215, 0.2);
+}
+
+input.disabled {
+    background: #f5f5f5;
+    color: #666;
+    cursor: not-allowed;
+}
+
+input.invalid {
+    border-color: #ef4444;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.2s;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.tab-btn:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.tab-btn.active {
+    background: #0078d7;
+    color: white;
+}
+
+.tab-content {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
 
 /* Form Actions */
 .form-actions {
     display: flex;
     gap: 1rem;
+    margin-top: 2rem;
 }
 
 .btn-submit {
-    /* background: linear-gradient(135deg, #0078d7 0%, #005fa3 100%); */
     background: #0078d7;
     color: white;
     border: none;
@@ -220,6 +259,7 @@ button:hover {
     border-radius: 8px;
     cursor: pointer;
     transition: 0.3s ease;
+    flex: 1;
 }
 
 .btn-submit:hover:not(:disabled) {
@@ -234,6 +274,13 @@ button:hover {
 .btn-reset {
     background: #f3f4f6;
     color: #374151;
+    border: 1px solid #d1d5db;
+    padding: 10px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    flex: 1;
 }
 
 .btn-reset:hover:not(:disabled) {
@@ -250,6 +297,9 @@ button:hover {
     color: #ef4444;
     font-size: 0.875rem;
     margin-top: 0.25rem;
+    padding: 0.5rem;
+    background: #fef2f2;
+    border-radius: 4px;
     animation: fadeIn 0.3s ease;
 }
 
@@ -257,7 +307,15 @@ button:hover {
     color: #10b981;
     font-size: 0.875rem;
     margin-top: 0.25rem;
+    padding: 0.5rem;
+    background: #f0fdf4;
+    border-radius: 4px;
     animation: fadeIn 0.3s ease;
+}
+
+.error small {
+    display: block;
+    margin-top: 0.25rem;
 }
 
 @keyframes fadeIn {
@@ -272,19 +330,27 @@ button:hover {
     }
 }
 
-.hidden {
-    display: none;
-}
-
 /* Responsive */
-@media (max-width: 640px) {
-    /* .container {
+@media (max-width: 768px) {
+    .container {
         padding: 1rem;
     }
 
     .form-container {
-        padding: 1.5rem;
-    } */
+        width: 90%;
+        margin: 20px auto;
+        padding: 1rem;
+    }
+
+    .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    label {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
 
     .avatar-preview {
         width: 120px;
@@ -296,13 +362,17 @@ button:hover {
         align-items: center;
     }
 
-    .btn-upload,
-    .btn-remove {
+    .avatar-upload,
+    .avatar-remove {
         width: 100%;
         justify-content: center;
     }
 
     .form-actions {
+        flex-direction: column;
+    }
+
+    .tabs {
         flex-direction: column;
     }
 }

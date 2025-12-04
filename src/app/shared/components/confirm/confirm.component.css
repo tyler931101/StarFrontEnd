@@ -1,0 +1,8 @@
+:host .text-center h5 {
+    font-weight: 600;
+    color: var(--color-gray-700);
+}
+
+:host .text-center p {
+    color: var(--color-gray-500);
+}

@@ -1,3 +1,7 @@
+.register-container {
+    min-width: 500px;
+}
+
 .form-container {
     max-width: 400px;
     margin: 40px auto;
@@ -12,6 +16,26 @@
     margin-bottom: 16px;
     display: flex;
     flex-direction: column;
+}
+
+.success-message {
+    color: #10b981;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    background: #f0fdf4;
+    border-radius: 4px;
+    animation: fadeIn 0.3s ease;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    background: #fef2f2;
+    border-radius: 4px;
+    animation: fadeIn 0.3s ease;
 }
 
 label {

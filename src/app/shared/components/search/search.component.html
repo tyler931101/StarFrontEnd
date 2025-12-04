@@ -1,0 +1,12 @@
+<div class="search-container">
+    <div class="input-group">
+        <span class="input-group-text">
+            <i class="bi bi-search"></i>
+        </span>
+        <input #searchInput type="text" class="form-control" [placeholder]="placeholder" [value]="searchTerm"
+            (input)="onSearch($event)" />
+        <button *ngIf="searchTerm" class="btn btn-outline-secondary" type="button" (click)="clearSearch()">
+            <i class="bi bi-x"></i>
+        </button>
+    </div>
+</div>

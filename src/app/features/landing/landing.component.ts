@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/services/auth.service';
-import { adminRoutes } from '../../shared/routing.module/admin.routes';
-import { userRoutes } from '../../shared/routing.module/user.routes';
+import { adminRoutes } from '../../routers/admin.routes';
+import { userRoutes } from '../../routers/user.routes';
 
 @Component({
   selector: 'app-landing',

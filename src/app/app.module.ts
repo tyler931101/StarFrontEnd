@@ -1,28 +1,28 @@
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
-import { CoreModule } from './core/core.module';
-import { AppRoutingModule, routes } from './app.routes';
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+// Shared Module
+import { ComponentsModule } from './shared/components/components.module';
+
+// Routes
 
 @NgModule({
-  declarations: [],
+  declarations: [
+  ],
   imports: [
-    AppComponent,
-    HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
-    RouterModule.forRoot(routes),
-    // Toastr removed - provide a no-op implementation below to satisfy DI
-    
-    CoreModule,
-    AppRoutingModule
+    HttpClientModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ComponentsModule
   ],
-  providers: [
-    // Noop Toastr removed; uses NotificationService instead
-   ],
-   bootstrap: [AppComponent]
- })
- export class AppModule {}
+  providers: [],
+  bootstrap: []
+})
+export class AppModule { }

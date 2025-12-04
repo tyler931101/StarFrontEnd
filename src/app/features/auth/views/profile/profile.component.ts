@@ -1,50 +1,168 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { UserDto } from '../../models/user.model';
+import { UserProfileDto, UpdateProfileDto, ChangePasswordDto } from '../../models/user.model';
+import { UserStateService } from 'app/core/services/user-state.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css'],
+  styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('profileForm') profileForm?: NgForm;
+  @ViewChild('passwordForm') passwordForm?: NgForm;
 
-  profileUser: Partial<UserDto> = { username: '', email: '', phone: '' };
-  originalUser: Partial<UserDto> = { ...this.profileUser };
+  // Profile data
+  profileData: UpdateProfileDto = { 
+    username: '', 
+    email: '',
+    phone: ''
+  };
 
-  profileImage: string = 'assets/default-avatar.jpg';
+  // Password change data
+  passwordData: ChangePasswordDto = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
+
+  // UI State
+  userId: string = '';
+  activeTab: 'profile' | 'password' = 'profile';
+  profileImage: string = 'assets/default-avatar.png';
   selectedFile?: File;
-
+  originalProfile: any = {};
+  
+  // Loading states
   isSubmitting = false;
-  saveSuccess = false;
-  submitError = '';
+  isUploading = false;
+  isChangingPassword = false;
+  isLoadingAvatar = false;
+  
+  // Messages
+  successMessage = '';
+  errorMessage = '';
   imageError = '';
+  passwordError = '';
 
-  constructor(private auth: AuthService) {}
+  // User info from state
+  userEmail: string = '';
+  userRole: string = '';
+  accountCreated: string = '';
+  isVerified: boolean = false;
+
+  constructor(
+    private authService: AuthService,
+    private userState: UserStateService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadProfile();
   }
 
   loadProfile(): void {
-    // this.auth.getProfile().subscribe({
-    //   next: (user: any) => {
-    //     this.profileUser = {
-    //       username: user.username || '',
-    //       email: user.email || '',
-    //       phone: user.phone || '',
-    //     };
-    //     this.originalUser = { ...this.profileUser };
-    //     this.profileImage = user.profileImageUrl || this.profileImage;
-    //   },
-    //   error: () => (this.submitError = 'Failed to load profile.'),
-    // });
+    this.authService.getProfile().subscribe({
+      next: (response: any) => {
+        if (response.success && response.data) {
+          const user = response.data;
+          
+          // Store original profile for comparison
+          this.originalProfile = { ...user };
+          
+          // Update profile data
+          this.profileData = {
+            username: user.username || '',
+            email: user.email || '',
+            phone: user.phone || '',
+          };
+          
+          this.userId = user.id;
+
+          this.loadAvatarFromBackend();
+          // Update UI state
+          this.profileImage = user.avatarUrl || 'assets/default-avatar.png';
+          this.userEmail = user.email || '';
+          this.userRole = user.role || '';
+          this.accountCreated = user.createdAt || '';
+          this.isVerified = user.isVerified || false;
+          
+          // Update user state
+          this.userState.setUser(user);
+        }
+      },
+      error: (error: any) => {
+        this.errorMessage = error.error?.message || 'Failed to load profile.';
+      }
+    });
+  }
+
+  // Load avatar from backend API
+  loadAvatarFromBackend(): void {
+    if (!this.userId) return;
+
+    this.isLoadingAvatar = true;
+    this.profileImage = 'assets/default-avatar.png'; // Show default while loading
+    this.cdr.detectChanges();
+    
+    // Add timestamp to prevent caching issues
+    const timestamp = new Date().getTime();
+    this.authService.getUserAvatar(this.userId, timestamp).subscribe({
+      next: (blob: Blob) => {
+        this.createImageFromBlob(blob);
+        this.isLoadingAvatar = false;
+          this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        this.profileImage = 'assets/default-avatar.png';
+        this.isLoadingAvatar = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // Convert Blob to image URL
+  async createImageFromBlob(blob: Blob): Promise<void> {
+    try {
+      // Check if blob is valid
+      if (!blob || blob.size === 0) {
+        throw new Error('Empty blob received');
+      }
+
+      // Create object URL for better performance (instead of data URL)
+      const objectUrl = URL.createObjectURL(blob);
+      
+      // Preload image to ensure it's valid
+      const img = new Image();
+      img.onload = () => {
+        // Clean up previous object URL if exists
+        if (this.profileImage.startsWith('blob:')) {
+          URL.revokeObjectURL(this.profileImage);
+        }
+        
+        this.profileImage = objectUrl;
+        this.cdr.detectChanges();
+      };
+      
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        this.profileImage = 'assets/default-avatar.png';
+        this.cdr.detectChanges();
+      };
+      
+      img.src = objectUrl;
+      
+    } catch (error) {
+      console.error('Error processing image blob:', error);
+      this.profileImage = 'assets/default-avatar.png';
+      this.cdr.detectChanges();
+    }
   }
 
   triggerFileInput() {
@@ -55,7 +173,11 @@ export class ProfileComponent implements OnInit {
     const file = event.target.files && event.target.files[0];
     if (!file) return;
     
-    if (!this.isValidImage(file)) return;
+    if (!this.isValidImage(file)) {
+      // Reset file input
+      this.fileInput.nativeElement.value = '';
+      return;
+    }
 
     this.selectedFile = file;
     const reader = new FileReader();
@@ -64,15 +186,13 @@ export class ProfileComponent implements OnInit {
       this.imageError = '';
     };
     reader.readAsDataURL(file);
+    
+    // Reset file input
+    this.fileInput.nativeElement.value = '';
   }
 
   isValidImage(file: File): boolean {
-    const allowedTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/webp',
-      'image/gif',
-    ];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     const maxSize = 5 * 1024 * 1024; // 5MB
     
     if (!allowedTypes.includes(file.type)) {
@@ -89,78 +209,263 @@ export class ProfileComponent implements OnInit {
     return true;
   }
 
-  uploadAvatar() {
-    if (!this.selectedFile) return;
+  // SAVE CHANGES - Updates everything at once (username, email, phone, avatar)
+  saveChanges(form: NgForm) {
+    if (form.invalid) {
+      Object.values(form.controls).forEach((c) => {
+        c.markAsTouched();
+        c.markAsDirty();
+      });
+      return;
+    }
+    
+    // Check if any changes were made
+    const hasChanges = this.hasProfileChanges() || this.selectedFile;
+    
+    if (!hasChanges) {
+      this.showSuccess('No changes to save.');
+      return;
+    }
     
     this.isSubmitting = true;
-    this.auth.uploadProfileImage(this.selectedFile).subscribe({
-      next: (res: any) => {
-        this.profileImage = res.imageUrl || this.profileImage;
-        this.selectedFile = undefined;
+    this.errorMessage = '';
+    this.successMessage = '';
+    
+    // Create FormData for the update
+    const formData = new FormData();
+    
+    // Add profile data if changed
+    if (this.hasProfileChanges()) {
+      if (this.profileData.username !== this.originalProfile.username) {
+        formData.append('username', this.profileData.username || '');
+      }
+      if (this.profileData.email !== this.originalProfile.email) {
+        formData.append('email', this.profileData.email || '');
+      }
+      if (this.profileData.phone !== this.originalProfile.phone) {
+        formData.append('phone', this.profileData.phone || '');
+      }
+    }
+    
+    // Add avatar file if selected
+    if (this.selectedFile) {
+      formData.append('avatar', this.selectedFile, this.selectedFile.name);
+    }
+    // Call the combined update API
+    this.authService.updateProfileWithAvatar(formData).subscribe({
+      next: (response: any) => {
+        if (response.success && response.data) {
+          // If an avatar was uploaded or backend returned an avatar URL, reload the avatar
+          if (this.selectedFile || response.data.avatarUrl) {
+            // Revoke any previous blob URL to avoid memory leaks
+            if (this.profileImage && this.profileImage.startsWith('blob:')) {
+              URL.revokeObjectURL(this.profileImage);
+            }
+            // Force reload from backend which will fetch the latest image and handle cache-busting
+            this.loadAvatarFromBackend();
+          }
+
+          // Update user info
+          if (response.data.profile) {
+            // Update local data
+            this.userEmail = response.data.profile.email || '';
+            this.isVerified = response.data.profile.isVerified || false;
+            this.originalProfile = { ...response.data.profile };
+            
+            // Update user state
+            this.userState.updateUser(response.data.profile);
+          }
+          
+          // Reset file selection
+          this.selectedFile = undefined;
+          
+          // Show success message
+          let message = 'Profile updated successfully!';
+          if (response.data.requiresEmailVerification) {
+            message += ' Please check your email to verify your new email address.';
+          }
+          this.showSuccess(message);
+          
+          // Reset form state
+          if (this.profileForm) {
+            this.profileForm.form.markAsPristine();
+            this.profileForm.form.markAsUntouched();
+          }
+        } else {
+          this.errorMessage = response.message || 'Failed to update profile.';
+        }
         this.isSubmitting = false;
-        this.showSuccess('Avatar uploaded successfully!');
       },
-      error: (err: any) => {
-        this.imageError = err?.error?.message || 'Upload failed. Please try again.';
+      error: (error: any) => {
+        console.error('Save changes error:', error);
+        
+        if (error.status === 409) {
+          this.errorMessage = error.error?.message || 
+                             'Username or email is already in use. Please try another.';
+        } else if (error.status === 400) {
+          this.errorMessage = error.error?.message || 'Invalid input data. Please check your entries.';
+        } else if (error.status === 413) {
+          this.errorMessage = 'Image file is too large. Maximum size is 5MB.';
+        } else if (error.status === 415) {
+          this.errorMessage = 'Unsupported image format. Please use JPEG, PNG, WebP, or GIF.';
+        } else {
+          this.errorMessage = error.error?.message || 
+                             error.message || 
+                             'Failed to save changes. Please try again.';
+        }
         this.isSubmitting = false;
-      },
+      }
     });
   }
 
+  // Check if profile data has changed
+  hasProfileChanges(): boolean {
+    const current = this.profileData;
+    const original = this.originalProfile;
+    
+    return (
+      (current.username || '') !== (original.username || '') ||
+      (current.email || '') !== (original.email || '') ||
+      (current.phone || '') !== (original.phone || '')
+    );
+  }
+
   removeAvatar() {
-    // Ask for confirmation before removing
     if (confirm('Are you sure you want to remove your profile picture?')) {
-      this.profileImage = 'assets/default-avatar.jpg';
-      this.selectedFile = undefined;
-      this.showSuccess('Profile picture removed.');
+      this.isUploading = true;
+      
+      this.authService.deleteAvatar().subscribe({
+        next: (response: any) => {
+          if (response.success) {
+            this.profileImage = 'assets/default-avatar.png';
+            this.selectedFile = undefined;
+            this.originalProfile.avatarUrl = '';
+            this.showSuccess('Profile picture removed.');
+            
+            // Update user state
+            this.userState.updateUser({ avatarUrl: '' });
+
+            // Force reload from backend which will fetch the latest image and handle cache-busting
+            this.loadAvatarFromBackend();
+          }
+          this.isUploading = false;
+        },
+        error: (error: any) => {
+          this.errorMessage = error.error?.message || 'Failed to remove avatar.';
+          this.isUploading = false;
+        }
+      });
     }
   }
 
-  updateProfile(form: NgForm) {
+  changePassword(event: Event, form: NgForm) {
+    event.preventDefault();
+    console.log();
+    
     if (form.invalid) {
       Object.values(form.controls).forEach((c) => c.markAsTouched());
       return;
     }
     
-    // Upload avatar first if new file is selected
-    if (this.selectedFile) {
-      this.uploadAvatar();
-      // Note: In a real app, you might want to update profile after avatar upload
+    // Additional validation
+    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
+      this.passwordError = 'New passwords do not match.';
       return;
     }
     
-    this.isSubmitting = true;
-    this.auth.updateProfile(this.profileUser).subscribe({
-      next: () => {
-        this.originalUser = { ...this.profileUser };
-        this.saveSuccess = true;
-        this.isSubmitting = false;
-        setTimeout(() => (this.saveSuccess = false), 3000);
+    if (this.passwordData.currentPassword === this.passwordData.newPassword) {
+      this.passwordError = 'New password must be different from current password.';
+      return;
+    }
+    
+    // Password strength validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(this.passwordData.newPassword)) {
+      this.passwordError = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.';
+      return;
+    }
+    
+    this.isChangingPassword = true;
+    this.passwordError = '';
+    
+    this.authService.changePassword(this.passwordData).subscribe({
+      next: (response: any) => {
+         if (response.success) {
+          this.showSuccess('Password changed successfully!');
+          this.resetPasswordForm();
+        } else {
+          this.passwordError = response.message || 'Failed to change password.';
+        }
+        this.isChangingPassword = false;
       },
-      error: (err: any) => {
-        this.submitError = err?.error?.message || 'Failed to save changes.';
-        this.isSubmitting = false;
-      },
+      error: (error: any) => {
+        this.passwordError = error.error?.message || 'Failed to change password.';
+        this.isChangingPassword = false;
+      }
     });
   }
 
-  reset() {
-    this.profileUser = { ...this.originalUser };
-    this.profileImage = String((this.originalUser as any)?.profileImageUrl ?? 'assets/default-avatar.jpg');
+  resetProfile() {
+    // Reload original data
+    this.profileData = {
+      username: this.originalProfile.username || '',
+      email: this.originalProfile.email || '',
+      phone: this.originalProfile.phone || '',
+    };
+    
     this.selectedFile = undefined;
+    // this.profileImage = this.originalProfile.avatarUrl || 'assets/default-avatar.png';
+    this.profileImage = 'assets/default-avatar.png';
     this.imageError = '';
-    this.submitError = '';
+    this.errorMessage = '';
     
     if (this.profileForm) {
-      this.profileForm.resetForm(this.profileUser);
+      this.profileForm.resetForm(this.profileData);
+      this.profileForm.form.markAsPristine();
+      this.profileForm.form.markAsUntouched();
     }
   }
 
-  showSuccess(msg: string) {
-    this.saveSuccess = true;
-    this.submitError = '';
+  resetPasswordForm() {
+    this.passwordData = {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    };
+    this.passwordError = '';
+    
+    if (this.passwordForm) {
+      this.passwordForm.resetForm();
+      this.passwordForm.form.markAsPristine();
+      this.passwordForm.form.markAsUntouched();
+    }
+  }
+
+  setActiveTab(tab: 'profile' | 'password') {
+    this.activeTab = tab;
+    this.errorMessage = '';
+    this.passwordError = '';
+    this.imageError = '';
+  }
+
+  showSuccess(message: string) {
+    this.successMessage = message;
     setTimeout(() => {
-      this.saveSuccess = false;
-    }, 3000);
+      this.successMessage = '';
+    }, 5000);
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return 'Unknown';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return 'Invalid date';
+    }
   }
 }

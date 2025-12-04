@@ -1,6 +1,31 @@
 /* You can add global styles to this file, and also import other style files */
-.body {
-    margin: 0px;
-}
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.container {
+    padding: 30px 50px;
+    margin: 0 auto;
+}
+
+:root {
+    --color-primary: #0078d7;
+    --color-primary-dark: #005fa3;
+    --color-gray-700: #374151;
+    --color-gray-500: #6b7280;
+    --color-border: #e5e7eb;
+    --ring: rgba(0, 120, 215, 0.25);
+    --radius: 12px;
+    --surface: #ffffff;
+    --surface-muted: #f9fafb;
+    --shadow-elev: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+body {
+    background: #f8fafc;
+    color: var(--color-gray-700);
+}
+
+.focus-ring:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--ring);
+}

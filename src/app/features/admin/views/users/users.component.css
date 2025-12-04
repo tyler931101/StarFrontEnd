@@ -1,0 +1,68 @@
+.container {
+    padding: 30px 50px;
+    margin: 0 auto;
+}
+:host {
+    display: block;
+    padding: 20px 0;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    vertical-align: middle;
+    border-top: 1px solid #f3f4f6;
+}
+
+.table-hover tbody tr:hover {
+    background: #f9fafb;
+}
+
+.badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+.btn-group-sm>.btn {
+    padding: 0.25rem 0.5rem;
+}
+
+.filter-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-section label {
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .btn-group-sm>.btn {
+        padding: 0.375rem 0.75rem;
+    }
+}

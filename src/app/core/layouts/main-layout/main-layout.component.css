@@ -36,6 +36,11 @@ router-outlet {
     margin-right: 30px;
 }
 
+.right {
+    display: flex;
+    align-items: center;
+}
+
 .brand {
     font-size: 1.2rem;
     font-weight: 600;

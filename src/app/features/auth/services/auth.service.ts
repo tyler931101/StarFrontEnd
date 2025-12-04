@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { catchError, Observable, tap, throwError, of } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { RegisterUser } from '../models/register.model';
@@ -7,6 +8,7 @@ import { JwtPayload } from '../models/jwt-payload.model';
 import { TokenService } from './token.service';
 import { ApiService } from '../../../core/services/api.service';
 import { UserStateService } from '../../../core/services/user-state.service';
+import { UpdateProfileDto, ChangePasswordDto } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -20,14 +22,9 @@ export class AuthService {
   // --- Register a new user
   register(user: RegisterUser): Observable<any> {
     return this.api.post('auth/register', user).pipe(
-      tap((res: any) => {
-        alert(res.message || 'Registration successful. Please check your email to verify your account.');
-        this.router.navigate(['/login'])
-      }),
-      catchError((error: any) => {
-        const errorMessage = error.error?.message || 'Register failed. Please try again.';
-        alert(errorMessage);
-        return of(null);
+      catchError((error) => {
+        console.error('Failed to get profile:', error);
+        return throwError(() => error);
       })
     );
   }
@@ -51,11 +48,9 @@ export class AuthService {
 
         this.redirectByRole(decoded.role);
       }),
-      catchError((error: any) => {
-        const errorMessage = error.error?.message || 'Login failed. Please try again.';
-        alert(errorMessage);
-        console.error('Login error:', error);
-        return of(null);
+      catchError((error) => {
+        console.error('Failed to get profile:', error);
+        return throwError(() => error);
       })
     );
   }
@@ -90,6 +85,20 @@ export class AuthService {
     this.tokenService.clearTokens();
     this.userState.clearUser();
     this.router.navigate(['/login']);
+    // logout() {
+    //   this.api.post('auth/logout', {}).subscribe({
+    //     next: () => {
+    //       this.tokenService.clearTokens();
+    //       this.userState.clearUser();
+    //       this.router.navigate(['/login']);
+    //     },
+    //     error: () => {
+    //       this.tokenService.clearTokens();
+    //       this.userState.clearUser();
+    //       this.router.navigate(['/login']);
+    //     }
+    //   });
+    // }
   }
 
   // --- Simple getter for login state
@@ -125,7 +134,6 @@ export class AuthService {
       const isExpired = decoded.exp ? Date.now() >= decoded.exp * 1000 : true;
       
       if (isExpired) {
-        console.warn('Token expired, clearing tokens');
         this.tokenService.clearTokens();
         this.userState.clearUser(); // Also clear user state for consistency
         return null;
@@ -146,7 +154,6 @@ export class AuthService {
     try {
       const decoded = jwtDecode<JwtPayload>(token);
       const isExpired = decoded.exp ? Date.now() >= decoded.exp * 1000 : true;
-      console.log('decoded email', decoded);
       if (isExpired) {
         console.warn('Token expired, clearing tokens');
         this.tokenService.clearTokens();
@@ -162,21 +169,166 @@ export class AuthService {
     }
   }
 
+  get currentUserId(): string | null {
+    const token = this.tokenService.getAccessToken();
+    if (!token) return null;
+  
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
+      const isExpired = decoded.exp ? Date.now() >= decoded.exp * 1000 : true;
+      if (isExpired) {
+        console.warn('Token expired, clearing tokens');
+        this.tokenService.clearTokens();
+        this.userState.clearUser(); // Also clear user state for consistency
+        return null;
+      }
+      return decoded.id || null;
+    } catch (err) {
+      console.error('Error decoding token', err);
+      this.tokenService.clearTokens();
+      this.userState.clearUser(); // Also clear user state for consistency
+      return null;
+    }
+  }
+
   navigateToProfile() {
     this.router.navigate(['/profile']);
   }
 
+  // Get user profile from /api/user/profile
   getProfile(): Observable<any> {
-    return this.api.get('auth/me');
+    return this.api.get('user/profile').pipe(
+      tap((response: any) => {
+        if (response.success && response.data) {
+          this.userState.setUser(response.data);
+        }
+      }),
+      catchError((error) => {
+        console.error('Failed to get profile:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  updateProfile(payload: any): Observable<any> {
-    return this.api.put('auth/profile', payload);
+  getUserAvatar(userId?: string, timestamp?: number): Observable<Blob> {
+    const endpoint = `user/${userId}/avatar${timestamp ? `?t=${timestamp}` : ''}`;
+
+    return (this.api.getBlob(endpoint as any) as unknown as Observable<Blob>).pipe(
+      // return (this.api.getBlob(endpoint, { responseType: 'blob' } as any) as unknown as Observable<Blob>).pipe(
+       catchError((error) => {
+         console.error('Failed to get avatar:', error);
+         return throwError(() => error);
+       })
+     );
   }
 
-  uploadProfileImage(file: File): Observable<{ imageUrl: string }> {
-    const fd = new FormData();
-    fd.append('file', file);
-    return this.api.post('auth/profile/image', fd);
+   updateProfileWithAvatar(formData: FormData): Observable<any> {
+    return this.api.put('user/update-profile', formData).pipe(
+      tap((response: any) => {
+        if (response.success && response.data) {
+          // Update user state
+          const updatedUser = {
+            ...response.data.profile,
+            avatarUrl: response.data.avatarUrl || response.data.profile.avatarUrl
+          };
+          this.userState.setUser(updatedUser);
+        }
+      }),
+      catchError((error) => {
+        console.error('Update profile error:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // Update profile via /api/user/profile (PUT)
+  updateProfile(payload: UpdateProfileDto): Observable<any> {
+    console.log(payload)
+    return this.api.put('user/profile', payload).pipe(
+      tap((response: any) => {
+        if (response.success && response.data) {
+          this.userState.setUser(response.data);
+        }
+      })
+    );
+  }
+
+  // Upload avatar via /api/user/upload-avatar (POST with FormData)
+  uploadAvatar(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('ImageFile', file, file.name);
+    
+    return this.api.post('user/upload-avatar', formData).pipe(
+      tap((response: any) => {
+        if (response.success && response.data) {
+          // Update user state with new avatar URL
+          const currentUser = this.userState.getUser();
+          if (currentUser && response.data.avatarUrl) {
+            this.userState.setUser({
+              ...currentUser,
+              avatarUrl: response.data.avatarUrl
+            });
+          }
+        }
+      })
+    );
+  }
+
+  // Update avatar via /api/user/avatar (PUT with FormData) - alternative
+  updateAvatar(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    
+    return this.api.put('user/avatar', formData).pipe(
+      tap((response: any) => {
+        if (response.success && response.data) {
+          const currentUser = this.userState.getUser();
+          if (currentUser && response.data.avatarUrl) {
+            this.userState.setUser({
+              ...currentUser,
+              avatarUrl: response.data.avatarUrl
+            });
+          }
+        }
+      })
+    );
+  }
+
+  // Delete avatar via /api/user/avatar (DELETE)
+  deleteAvatar(): Observable<any> {
+    return this.api.delete('user/avatar').pipe(
+      tap((response: any) => {
+        if (response.success) {
+          // Update user state - clear avatar
+          const currentUser = this.userState.getUser();
+          if (currentUser) {
+            this.userState.setUser({
+              ...currentUser,
+              avatarUrl: ''
+            });
+          }
+        }
+      })
+    );
+  }
+
+  // Change password via /api/user/change-password (POST)
+  changePassword(payload: ChangePasswordDto): Observable<any> {
+    return this.api.post('user/change-password', payload);
+  }
+
+  // Check email verification status via /api/user/check-email (GET)
+  checkEmailVerification(): Observable<any> {
+    return this.api.get('user/check-email');
+  }
+
+  // Resend verification email via /api/user/resend-verification (POST)
+  resendVerificationEmail(): Observable<any> {
+    return this.api.post('user/resend-verification', {});
+  }
+
+  // Get user activity via /api/user/activity (GET)
+  getUserActivity(): Observable<any> {
+    return this.api.get('user/activity');
   }
 }

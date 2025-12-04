@@ -1,3 +1,7 @@
+.login-container {
+    min-width: 500px;
+}
+
 .form-container {
     max-width: 400px;
     margin: 40px auto;
@@ -12,6 +16,16 @@
     margin-bottom: 16px;
     display: flex;
     flex-direction: column;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    background: #fef2f2;
+    border-radius: 4px;
+    animation: fadeIn 0.3s ease;
 }
 
 label {
@@ -60,4 +74,15 @@ button:hover:not([disabled]) {
 
 button:disabled {
     opacity: 0.6;
-    cursor: not-allowed; }
+    cursor: not-allowed;
+}
+
+.navigate-register {
+    cursor: pointer;
+    text-decoration: dashed;
+    text-align: center;
+}
+
+.navigate-register:hover {
+    color: #005fa3;
+}

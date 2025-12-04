@@ -7,12 +7,11 @@
         </div>
 
         <div class="right">
-            <div class="avatar-menu" (click)="toggleDropdown()">
+            <img [src]="profileImage" alt="Profile Avatar" class="avatar-menu" (click)="toggleDropdown()" />
                 <div *ngIf="isDropdownvisible" class="dropdown">
                     <div (click)="viewProfile(); $event.preventDefault();">Profile</div>
                     <div (click)="logout(); $event.preventDefault();">Logout</div>
                 </div>
-            </div>
         </div>
     </header>
     <router-outlet></router-outlet>

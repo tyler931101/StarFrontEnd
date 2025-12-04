@@ -18,6 +18,8 @@ import { MatButtonModule } from '@angular/material/button';
 
 export class RegisterComponent {
   registerUser: RegisterUser = { username: '', email: '', password: '', confirm: '' };
+  successMessage = '';
+  errorMessage = '';
 
   constructor(private auth: AuthService) {}
 
@@ -25,11 +27,19 @@ export class RegisterComponent {
     if(form.invalid || this.registerUser.password !== this.registerUser.confirm) return;
     return this.auth.register(this.registerUser).subscribe({
       next: res => {
+        this.showSuccess(this.successMessage = res.message || 'Registration successful. Please check your email to verify your account.');
         form.reset();
       },
-      error: err => {
-        console.error(err);
+      error: (error: any) => {
+        this.errorMessage = error.error?.message || 'Register Failed.';
       }
     })
+  }
+
+  showSuccess(message: string) {
+    this.successMessage = message;
+    setTimeout(() => {
+      this.successMessage = '';
+    }, 5000);
   }
 }
