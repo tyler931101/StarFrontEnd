@@ -1,3 +1,200 @@
 <div class="container">
     <h1>Ticket Reports</h1>
+
+    <div class="charts">
+        <div class="tabs">
+            <button class="tab-btn" [class.active]="activeTab==='status'" (click)="activeTab='status'">Status Charts</button>
+            <button class="tab-btn" [class.active]="activeTab==='filter'" (click)="activeTab='filter'">Filter Charts</button>
+        </div>
+
+        <div *ngIf="activeTab==='status'" class="tab-content">
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-title">Bar by Status</div>
+                    <div class="bar-chart">
+                        <div class="bar bar-todo" [style.width.%]="(statusCounts.todo / maxCount) * 100">
+                            <span>To Do {{ statusCounts.todo }}</span>
+                        </div>
+                        <div class="bar bar-in" [style.width.%]="(statusCounts.in_progress / maxCount) * 100">
+                            <span>In Progress {{ statusCounts.in_progress }}</span>
+                        </div>
+                        <div class="bar bar-done" [style.width.%]="(statusCounts.done / maxCount) * 100">
+                            <span>Done {{ statusCounts.done }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">Pie by Status</div>
+                    <div class="pie-chart" [style.background]="pieBackground">
+                        <div class="pie-center">
+                            <div class="legend">
+                                <div class="legend-item"><span class="dot todo"></span>To Do {{ statusCounts.todo }}</div>
+                                <div class="legend-item"><span class="dot in"></span>In Progress {{ statusCounts.in_progress }}</div>
+                                <div class="legend-item"><span class="dot done"></span>Done {{ statusCounts.done }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">Numbers</div>
+                    <div class="kpi-grid">
+                        <div class="kpi todo">To Do <strong>{{ statusCounts.todo }}</strong></div>
+                        <div class="kpi in">In Progress <strong>{{ statusCounts.in_progress }}</strong></div>
+                        <div class="kpi done">Done <strong>{{ statusCounts.done }}</strong></div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Stacked Bar</div>
+                    <div class="stacked-bar">
+                        <div class="segment todo" [style.width.%]="distPercent.todo"></div>
+                        <div class="segment in" [style.width.%]="distPercent.in_progress"></div>
+                        <div class="segment done" [style.width.%]="distPercent.done"></div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item"><span class="dot todo"></span>To Do {{ statusCounts.todo }}</div>
+                        <div class="legend-item"><span class="dot in"></span>In Progress {{ statusCounts.in_progress }}</div>
+                        <div class="legend-item"><span class="dot done"></span>Done {{ statusCounts.done }}</div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Radial Gauges</div>
+                    <div class="radial-grid">
+                        <div class="radial">
+                            <div class="ring" [style.background]="radialBg('#b91c1c', (statusCounts.todo / maxCount) * 100)"></div>
+                            <div class="radial-label">To Do {{ statusCounts.todo }}</div>
+                        </div>
+                        <div class="radial">
+                            <div class="ring" [style.background]="radialBg('#0369a1', (statusCounts.in_progress / maxCount) * 100)"></div>
+                            <div class="radial-label">In Progress {{ statusCounts.in_progress }}</div>
+                        </div>
+                        <div class="radial">
+                            <div class="ring" [style.background]="radialBg('#047857', (statusCounts.done / maxCount) * 100)"></div>
+                            <div class="radial-label">Done {{ statusCounts.done }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Vertical Bars (Multiple Series)</div>
+                    <div class="vbar-chart">
+                        <div class="vbar-grid"></div>
+                        <div class="vgroups">
+                            <div class="vgroup" *ngFor="let g of vbGroups">
+                                <div class="vbars">
+                                    <div class="vbar todo" [style.height.%]="barHeightPercent(g.todo)"></div>
+                                    <div class="vbar in" [style.height.%]="barHeightPercent(g.in_progress)"></div>
+                                    <div class="vbar done" [style.height.%]="barHeightPercent(g.done)"></div>
+                                </div>
+                                <div class="vlabel">{{ g.idx }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Line Chart with Multiple Series</div>
+                    <svg class="line-chart" viewBox="0 0 480 240" preserveAspectRatio="none">
+                        <g class="line-grid">
+                            <line x1="40" y1="200" x2="460" y2="200"></line>
+                            <line x1="40" y1="160" x2="460" y2="160"></line>
+                            <line x1="40" y1="120" x2="460" y2="120"></line>
+                            <line x1="40" y1="80" x2="460" y2="80"></line>
+                            <line x1="40" y1="40" x2="460" y2="40"></line>
+                        </g>
+                        <g class="line-axes">
+                            <line x1="40" y1="200" x2="40" y2="20"></line>
+                            <line x1="40" y1="200" x2="460" y2="200"></line>
+                        </g>
+                        <path [attr.d]="linePath(seriesTodo, 480, 240, 40, 20)" class="line-path todo"></path>
+                        <path [attr.d]="linePath(seriesInProgress, 480, 240, 40, 20)" class="line-path in"></path>
+                        <path [attr.d]="linePath(seriesDone, 480, 240, 40, 20)" class="line-path done"></path>
+                    </svg>
+                    <div class="legend">
+                        <div class="legend-item"><span class="dot todo"></span>To Do</div>
+                        <div class="legend-item"><span class="dot in"></span>In Progress</div>
+                        <div class="legend-item"><span class="dot done"></span>Done</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="activeTab==='filter'" class="tab-content">
+            <div class="filters mb-3">
+                <select class="form-select" [(ngModel)]="chartUser">
+                    <option value="">All Users</option>
+                    <option *ngFor="let u of uniqueUsers" [value]="u">{{ u }}</option>
+                </select>
+                <select class="form-select" [(ngModel)]="chartStatus">
+                    <option value="">All Statuses</option>
+                    <option value="todo">To Do</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="done">Done</option>
+                </select>
+            </div>
+
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-title">Bar by Status</div>
+                    <div class="bar-chart">
+                        <div class="bar bar-todo" [style.width.%]="(filteredChartCounts.todo / filteredMaxCount) * 100">
+                            <span>To Do {{ filteredChartCounts.todo }}</span>
+                        </div>
+                        <div class="bar bar-in" [style.width.%]="(filteredChartCounts.in_progress / filteredMaxCount) * 100">
+                            <span>In Progress {{ filteredChartCounts.in_progress }}</span>
+                        </div>
+                        <div class="bar bar-done" [style.width.%]="(filteredChartCounts.done / filteredMaxCount) * 100">
+                            <span>Done {{ filteredChartCounts.done }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Pie by Status</div>
+                    <div class="pie-chart" [style.background]="radialBg('#b91c1c', filteredDistPercent.todo) + ', ' + radialBg('#0369a1', filteredDistPercent.in_progress)"></div>
+                    <div class="legend">
+                        <div class="legend-item"><span class="dot todo"></span>To Do {{ filteredChartCounts.todo }}</div>
+                        <div class="legend-item"><span class="dot in"></span>In Progress {{ filteredChartCounts.in_progress }}</div>
+                        <div class="legend-item"><span class="dot done"></span>Done {{ filteredChartCounts.done }}</div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Stacked Bar</div>
+                    <div class="stacked-bar">
+                        <div class="segment todo" [style.width.%]="filteredDistPercent.todo"></div>
+                        <div class="segment in" [style.width.%]="filteredDistPercent.in_progress"></div>
+                        <div class="segment done" [style.width.%]="filteredDistPercent.done"></div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Grouped Stacked Bars by Assignee</div>
+                    <div class="grouped-bars">
+                        <div class="group-row" *ngFor="let g of groupedStatusByUser">
+                            <div class="group-label">{{ g.user }}</div>
+                            <div class="stacked-bar">
+                                <div class="segment todo" [style.width.%]="g.percents.todo"></div>
+                                <div class="segment in" [style.width.%]="g.percents.in_progress"></div>
+                                <div class="segment done" [style.width.%]="g.percents.done"></div>
+                            </div>
+                            <div class="group-total">Total {{ g.total }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Grouped Bars by Assignee</div>
+                    <div class="vbar-chart">
+                        <div class="vbar-grid"></div>
+                        <div class="vgroups">
+                            <div class="vgroup" *ngFor="let g of groupedStatusByUser">
+                                <div class="vbars">
+                                    <div class="vbar todo" [style.height.%]="(g.counts.todo / groupBarMaxCount) * 100"></div>
+                                    <div class="vbar in" [style.height.%]="(g.counts.in_progress / groupBarMaxCount) * 100"></div>
+                                    <div class="vbar done" [style.height.%]="(g.counts.done / groupBarMaxCount) * 100"></div>
+                                </div>
+                                <div class="vlabel">{{ g.user }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

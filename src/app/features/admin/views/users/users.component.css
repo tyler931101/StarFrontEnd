@@ -47,6 +47,11 @@
     gap: 8px;
 }
 
+.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
 .filter-section label {
     margin-bottom: 0;
 }

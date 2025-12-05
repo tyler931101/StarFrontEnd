@@ -1,3 +1,68 @@
 <div class="container">
-    <h1>Schedule Event</h1>
+    <h1>Calendar</h1>
+
+    <div class="cal-toolbar">
+        <button class="btn" (click)="prevMonth()">Prev</button>
+        <div class="month-label">{{ monthLabel }}</div>
+        <button class="btn" (click)="nextMonth()">Next</button>
+        <button class="btn" (click)="goToday()">Today</button>
+        <button class="btn btn-primary" (click)="openCreateFromToolbar()">Schedule Event</button>
+    </div>
+
+    <div class="calendar">
+        <div class="cal-head">
+            <div class="cal-cell" *ngFor="let d of daysOfWeek">{{ d }}</div>
+        </div>
+        <div class="cal-body" [style.gridTemplateRows]="'repeat(' + weeks.length + ', minmax(110px, auto))'">
+            <div class="cal-row" *ngFor="let w of weeks">
+                <div class="cal-cell cal-day" [class.out-month]="!d.inMonth" [class.today]="isToday(d.date)" *ngFor="let d of w">
+                    <div class="day-header">
+                        <span class="day-num">{{ d.date.getDate() }}</span>
+                    </div>
+                    <div class="events">
+                        <div class="event" *ngFor="let e of d.events" (click)="openEdit(e)" [class.period]="e.endDate && e.endDate !== e.date" [style.background]="e.color">
+                            <div class="event-title">{{ e.title }}</div>
+                            <div class="event-time" *ngIf="e.start || e.end">{{ e.start || '' }}{{ e.end ? ' - ' + e.end : '' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <app-modal [title]="editingEvent ? 'Edit Event' : 'Create Event'" [size]="'sm'" [confirmText]="editingEvent ? 'Save' : 'Create'" [cancelText]="'Cancel'" [isVisible]="isEventModalVisible" (confirm)="saveEvent()" (closeModal)="closeEventModal()">
+        <div class="mb-2">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-control" [(ngModel)]="formTitle">
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <label class="form-label">Start Date</label>
+                <input type="date" class="form-control" [(ngModel)]="formDate">
+            </div>
+            <div class="col">
+                <label class="form-label">End Date</label>
+                <input type="date" class="form-control" [(ngModel)]="formEndDate">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label class="form-label">Start</label>
+                <input type="time" class="form-control" [(ngModel)]="formStart">
+            </div>
+            <div class="col">
+                <label class="form-label">End</label>
+                <input type="time" class="form-control" [(ngModel)]="formEnd">
+            </div>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Description</label>
+            <textarea rows="3" class="form-control" [(ngModel)]="formDescription"></textarea>
+        </div>
+        <div class="mt-2" *ngIf="editingEvent">
+            <button class="btn btn-outline-danger" (click)="openDelete(editingEvent)">Delete</button>
+        </div>
+    </app-modal>
+
+    <app-confirm *ngIf="isDeleteModalVisible" [title]="'Delete Event'" [message]="'Are you sure you want to delete ' + (editingEvent?.title || '') + '?'" [details]="'This action cannot be undone.'" type="warning" confirmText="Delete" cancelText="Cancel" confirmButtonClass="danger" [isVisible]="isDeleteModalVisible" (confirm)="confirmDelete()" (closeModal)="closeDeleteModal()"></app-confirm>
 </div>

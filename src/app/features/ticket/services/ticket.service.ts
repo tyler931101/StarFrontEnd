@@ -3,65 +3,83 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
 import { ApiService } from '../../../core/services/api.service';
-import { User, UserListResponse, UserQueryParams } from '../models/user.model';
+import { Ticket, TicketListResponse, TicketQueryParams, CreateTicketDto, UpdateTicketDto, TicketStatus } from '../models/ticket.model';
 
 @Injectable({ providedIn: 'root' })
-export class UserService {
+export class TicketService {
   constructor(private api: ApiService) {}
 
-  getUsers(params: UserQueryParams): Observable<UserListResponse> {
+  getTickets(params: TicketQueryParams): Observable<TicketListResponse> {
     let httpParams = new HttpParams()
       .set('page', params.page)
       .set('pageSize', params.pageSize);
 
     if (params.search) httpParams = httpParams.set('search', params.search);
     if (params.status) httpParams = httpParams.set('status', params.status);
+    if (params.assignee) httpParams = httpParams.set('assignee', params.assignee);
     if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
     if (params.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
 
-    return this.api.get<any>('admin/users', httpParams).pipe(
+    return this.api.get<any>('tickets', httpParams).pipe(
       map((res: any) => {
-        // Normalize common API shapes into UserListResponse
         if (res?.data) {
           const d = res.data;
           return {
-            users: d.users ?? d.items ?? [],
+            tickets: d.tickets ?? d.items ?? [],
             total: d.total ?? d.count ?? 0,
             page: d.page ?? params.page,
             pageSize: d.pageSize ?? params.pageSize,
             totalPages: d.totalPages ?? Math.ceil((d.total ?? d.count ?? 0) / (d.pageSize ?? params.pageSize))
-          } as UserListResponse;
+          } as TicketListResponse;
         }
         return {
-          users: res.users ?? res.items ?? [],
+          tickets: res.tickets ?? res.items ?? [],
           total: res.total ?? res.count ?? 0,
           page: res.page ?? params.page,
           pageSize: res.pageSize ?? params.pageSize,
           totalPages: res.totalPages ?? Math.ceil((res.total ?? res.count ?? 0) / (res.pageSize ?? params.pageSize))
-        } as UserListResponse;
+        } as TicketListResponse;
       })
     );
   }
 
-  getUser(id: number): Observable<User> {
-    return this.api.get<any>(`admin/users/${id}`).pipe(
-      map((res: any) => res.data ?? res.user ?? res)
+  getTicket(id: string): Observable<Ticket> {
+    return this.api.get<any>(`tickets/${id}`).pipe(
+      map((res: any) => res.data ?? res.ticket ?? res)
     );
   }
 
-  updateUser(id: number, userData: Partial<User>): Observable<User> {
-    return this.api.put<any>(`admin/users/${id}`, userData).pipe(
-      map((res: any) => res.data ?? res.user ?? res)
+  createTicket(dto: CreateTicketDto): Observable<Ticket> {
+    return this.api.post<any>('tickets', dto).pipe(
+      map((res: any) => res.data ?? res.ticket ?? res)
     );
   }
 
-  deleteUser(id: number): Observable<boolean> {
-    return this.api.delete<any>(`admin/users/${id}`).pipe(
+  updateTicket(id: string, dto: UpdateTicketDto): Observable<Ticket> {
+    return this.api.put<any>(`tickets/${id}`, dto).pipe(
+      map((res: any) => res.data ?? res.ticket ?? res)
+    );
+  }
+
+  deleteTicket(id: string): Observable<boolean> {
+    return this.api.delete<any>(`tickets/${id}`).pipe(
       map((res: any) => {
         if (typeof res === 'boolean') return res;
         if (res?.success !== undefined) return !!res.success;
         return true;
       })
+    );
+  }
+
+  moveTicket(id: string, status: TicketStatus): Observable<Ticket> {
+    return this.api.patch<any>(`tickets/${id}/move`, { status }).pipe(
+      map((res: any) => res.data ?? res.ticket ?? res)
+    );
+  }
+
+  assignTicket(id: string, assignedTo: string): Observable<Ticket> {
+    return this.api.patch<any>(`tickets/${id}/assign`, { assignedTo }).pipe(
+      map((res: any) => res.data ?? res.ticket ?? res)
     );
   }
 }

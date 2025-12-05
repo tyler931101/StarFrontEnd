@@ -1,8 +1,8 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { UserRoutingModule } from './routers/user.routes';
-import { AdminRoutingModule } from './routers/admin.routes';
-import { AuthRoutingModule } from './routers/auth.routes';
+import { UserRoutingModule } from './shared/routers/user.routes';
+import { AdminRoutingModule } from './shared/routers/admin.routes';
+import { AuthRoutingModule } from './shared/routers/auth.routes';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
 import { AuthLayoutComponent } from './core/layouts/auth-layout/auth-layout.component';
 
@@ -13,7 +13,7 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                loadChildren: () => import('./routers/auth.routes').then(m => m.AuthRoutingModule)
+                loadChildren: () => import('./shared/routers/auth.routes').then(m => m.AuthRoutingModule)
             }
         ]
     },
@@ -31,11 +31,11 @@ export const routes: Routes = [
             },
             {
                 path: 'user',
-                loadChildren: () => import('./routers/user.routes').then(m => m.UserRoutingModule),
+                loadChildren: () => import('./shared/routers/user.routes').then(m => m.UserRoutingModule),
             },
             {
                 path: 'admin',
-                loadChildren: () => import('./routers/admin.routes').then(m => m.AdminRoutingModule),
+                loadChildren: () => import('./shared/routers/admin.routes').then(m => m.AdminRoutingModule),
             },
         ]
     },

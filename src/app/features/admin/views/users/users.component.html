@@ -33,13 +33,25 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Status</th>
-                            <th>Role</th>
-                            <th>Created</th>
+                            <th>No</th>
+                            <th class="sortable" (click)="changeSort('username')">
+                                Username <i [class]="getSortIcon('username')"></i>
+                            </th>
+                            <th class="sortable" (click)="changeSort('email')">
+                                Email <i [class]="getSortIcon('email')"></i>
+                            </th>
+                            <th class="sortable" (click)="changeSort('phone')">
+                                Phone <i [class]="getSortIcon('phone')"></i>
+                            </th>
+                            <th class="sortable" (click)="changeSort('status')">
+                                Status <i [class]="getSortIcon('status')"></i>
+                            </th>
+                            <th class="sortable" (click)="changeSort('role')">
+                                Role <i [class]="getSortIcon('role')"></i>
+                            </th>
+                            <th class="sortable" (click)="changeSort('createdAt')">
+                                Created <i [class]="getSortIcon('createdAt')"></i>
+                            </th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -52,8 +64,8 @@
                             </td>
                         </tr>
     
-                        <tr *ngFor="let user of users">
-                            <td>{{ user.id }}</td>
+                        <tr *ngFor="let user of users; let i = index">
+                            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
                             <td>{{ user.username }}</td>
                             <td>{{ user.email }}</td>
                             <td>{{ user.phone }}</td>

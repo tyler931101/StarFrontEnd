@@ -25,6 +25,8 @@ export class UsersComponent implements OnInit {
   
   searchTerm = '';
   statusFilter = '';
+  sortBy: keyof User | 'createdAt' | 'username' | 'email' | 'phone' | 'status' | 'role' = 'username';
+  sortOrder: 'asc' | 'desc' = 'asc';
   
   isLoading = false;
   
@@ -74,8 +76,8 @@ export class UsersComponent implements OnInit {
       pageSize: this.pageSize,
       search: this.searchTerm,
       status: this.statusFilter || undefined,
-      sortBy: 'username',
-      sortOrder: 'asc'
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder
     };
     
     this.userService.getUsers(params).subscribe({
@@ -92,6 +94,22 @@ export class UsersComponent implements OnInit {
     });
   }
   
+  changeSort(field: 'username' | 'email' | 'phone' | 'status' | 'role' | 'createdAt') {
+    if (this.sortBy === field) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = field;
+      this.sortOrder = 'asc';
+    }
+    this.currentPage = 1;
+    this.loadUsers();
+  }
+
+  getSortIcon(field: 'username' | 'email' | 'phone' | 'status' | 'role' | 'createdAt') {
+    if (this.sortBy !== field) return 'bi bi-arrow-down-up text-muted';
+    return this.sortOrder === 'asc' ? 'bi bi-arrow-up-short' : 'bi bi-arrow-down-short';
+  }
+
   onSearch(searchTerm: string) {
     this.searchSubject.next(searchTerm);
   }

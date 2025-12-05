@@ -1,3 +1,142 @@
 <div class="container">
     <h1>Ticket Management</h1>
+
+    <div class="toolbar">
+        <app-search [placeholder]="'Search tickets'" [searchTerm]="searchTerm" (search)="onSearch($event)"></app-search>
+        <div class="filters">
+            <select class="form-select" [(ngModel)]="selectedAssignee" (change)="applyFilter()">
+                <option value="">All Assignees</option>
+                <option *ngFor="let u of users" [value]="u">{{ u }}</option>
+            </select>
+            <select class="form-select" [(ngModel)]="selectedStatus" (change)="applyFilter()">
+                <option value="">All Statuses</option>
+                <option value="todo">To Do</option>
+                <option value="in_progress">In Progress</option>
+                <option value="done">Done</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" (click)="openCreate()">Create Ticket</button>
+    </div>
+
+    <div class="board">
+        <div class="column">
+            <div class="column-header">To Do</div>
+            <div cdkDropList [id]="'todoList'" [cdkDropListData]="todo" [cdkDropListConnectedTo]="['todoList','inProgressList','doneList']" class="list" (cdkDropListDropped)="drop($event)">
+                <div class="card" *ngFor="let t of filteredTodo" cdkDrag>
+                    <div class="card-title">{{ t.title }}</div>
+                    <div class="card-meta">
+                        <span class="badge">{{ t.id }}</span>
+                        <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'" [class.low]="t.priority==='low'">{{ t.priority }}</span>
+                        <span class="assignee">{{ t.assignedTo }}</span>
+                        <span class="ms-auto">
+                            <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
+                            <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="column-header">In Progress</div>
+            <div cdkDropList [id]="'inProgressList'" [cdkDropListData]="inProgress" [cdkDropListConnectedTo]="['todoList','inProgressList','doneList']" class="list" (cdkDropListDropped)="drop($event)">
+                <div class="card" *ngFor="let t of filteredInProgress" cdkDrag>
+                    <div class="card-title">{{ t.title }}</div>
+                    <div class="card-meta">
+                        <span class="badge">{{ t.id }}</span>
+                        <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'" [class.low]="t.priority==='low'">{{ t.priority }}</span>
+                        <span class="assignee">{{ t.assignedTo }}</span>
+                        <span class="ms-auto">
+                            <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
+                            <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="column-header">Done</div>
+            <div cdkDropList [id]="'doneList'" [cdkDropListData]="done" [cdkDropListConnectedTo]="['todoList','inProgressList','doneList']" class="list" (cdkDropListDropped)="drop($event)">
+                <div class="card" *ngFor="let t of filteredDone" cdkDrag>
+                    <div class="card-title">{{ t.title }}</div>
+                    <div class="card-meta">
+                        <span class="badge">{{ t.id }}</span>
+                        <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'" [class.low]="t.priority==='low'">{{ t.priority }}</span>
+                        <span class="assignee">{{ t.assignedTo }}</span>
+                        <span class="ms-auto">
+                            <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
+                            <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <app-modal [title]="'Edit Ticket'" [size]="'sm'" [confirmText]="'Save'" [cancelText]="'Cancel'"
+               [isVisible]="isEditModalVisible" (confirm)="saveEdit()" (closeModal)="closeEditModal()">
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-control" [(ngModel)]="editTitle">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Priority</label>
+            <select class="form-select" [(ngModel)]="editPriority">
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Assignee</label>
+            <select class="form-select" [(ngModel)]="editAssignedTo">
+                <option *ngFor="let u of users" [value]="u">{{ u }}</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" [(ngModel)]="editStatus">
+                <option value="todo">To Do</option>
+                <option value="in_progress">In Progress</option>
+                <option value="done">Done</option>
+            </select>
+        </div>
+    </app-modal>
+
+    <app-modal [title]="'Create Ticket'" [size]="'sm'" [confirmText]="'Create'" [cancelText]="'Cancel'"
+               [isVisible]="isCreateModalVisible" (confirm)="saveCreate()" (closeModal)="closeCreateModal()">
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-control" [(ngModel)]="editTitle">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Priority</label>
+            <select class="form-select" [(ngModel)]="editPriority">
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Assignee</label>
+            <select class="form-select" [(ngModel)]="editAssignedTo">
+                <option *ngFor="let u of users" [value]="u">{{ u }}</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" [(ngModel)]="editStatus">
+                <option value="todo">To Do</option>
+                <option value="in_progress">In Progress</option>
+                <option value="done">Done</option>
+            </select>
+        </div>
+    </app-modal>
+
+    <app-confirm *ngIf="isDeleteModalVisible" [title]="'Delete Ticket'"
+                 [message]="'Are you sure you want to delete ' + (selectedTicket?.title || '') + '?'"
+                 [details]="'This action cannot be undone.'" type="warning" confirmText="Delete" cancelText="Cancel"
+                 confirmButtonClass="danger" [isVisible]="isDeleteModalVisible" (confirm)="confirmDelete()"
+                 (closeModal)="closeDeleteModal()"></app-confirm>
 </div>
