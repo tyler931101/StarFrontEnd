@@ -22,7 +22,7 @@
                 #password="ngModel" [class.invalid]="password.invalid && password.touched" />
             <div class="error-message" *ngIf="password.invalid && password.touched">
                 <small *ngIf="password.errors?.['required']">Password is required.</small>
-                <small *ngIf="password.errors?.['minlength']">At least 6 characters.</small>
+                <small *ngIf="password.errors?.['minlength']">At least 8 characters.</small>
             </div>
         </div>
     
