@@ -37,6 +37,8 @@ export class UsersComponent implements OnInit {
   
   // Forms
   userForm: FormGroup;
+
+  profileImage: string = 'assets/default-avatar.png';
   
   // Search debounce
   private searchSubject = new Subject<string>();

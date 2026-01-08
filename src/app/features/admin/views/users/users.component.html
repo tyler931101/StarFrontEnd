@@ -3,38 +3,28 @@
     <div class="main-content">
         <!-- Filters and Search -->
         <div class="toolbar">
-            <div class="card">
-                <div class="row">
-                    <div class="col-md-6">
-                        <app-search [placeholder]="'Search by username, email, or phone'" [debounceTime]="300"
-                            (search)="onSearch($event)"></app-search>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex justify-content-md-end">
-                            <div class="filter-section">
-                                <label class="form-label me-2">Status:</label>
-                                <select class="form-select w-auto d-inline-block" [value]="statusFilter"
-                                    (change)="onStatusFilterChange($event)">
-                                    <option value="">All</option>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="pending">Pending</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="filters">
+                <app-search [placeholder]="'Search by username, email, or phone'" [debounceTime]="300"
+                    (search)="onSearch($event)"></app-search>
+                <select class="filter-select" [value]="statusFilter"
+                    (change)="onStatusFilterChange($event)">
+                    <option value="">All</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="pending">Pending</option>
+                </select>
             </div>
         </div>
         
         <!-- Users Table -->
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
+                <div class="table">
                     <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Avatar</th>
                                 <th class="sortable" (click)="changeSort('username')">
                                     Username <i [class]="getSortIcon('username')"></i>
                                 </th>
@@ -67,6 +57,9 @@
         
                             <tr *ngFor="let user of users; let i = index">
                                 <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                                <td>
+                                    <img src="" alt="" />
+                                </td>
                                 <td>{{ user.username }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>{{ user.phone }}</td>
@@ -102,10 +95,12 @@
                     </table>
                 </div>
         
-                <!-- Pagination -->
-                <app-pagination *ngIf="totalUsers > 0" [currentPage]="currentPage" [totalItems]="totalUsers"
-                    [pageSize]="pageSize" [totalPages]="totalPages" (pageChange)="onPageChange($event)"
-                    (pageSizeChange)="onPageSizeChange($event)"></app-pagination>
+                <div class="card-footer">
+                    <!-- Pagination -->
+                    <app-pagination *ngIf="totalUsers > 0" [currentPage]="currentPage" [totalItems]="totalUsers" [pageSize]="pageSize"
+                        [totalPages]="totalPages" (pageChange)="onPageChange($event)"
+                        (pageSizeChange)="onPageSizeChange($event)"></app-pagination>
+                </div>
             </div>
         </div>
         
@@ -114,48 +109,46 @@
             [isVisible]="isEditModalVisible" [confirmDisabled]="userForm.invalid || isLoading" confirmText="Save Changes"
             (confirm)="saveUser()" (closeModal)="closeEditModal()">
             <form [formGroup]="userForm">
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
+                <div class="form-group">
+                    <label>Username</label>
                     <input type="text" class="form-control" formControlName="username">
-                    <div *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched" class="text-danger">
+                    <div *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched" class="error-message">
                         Username is required and must be at least 3 characters
                     </div>
                 </div>
         
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
+                <div class="form-group">
+                    <label>Email</label>
                     <input type="email" class="form-control" formControlName="email">
-                    <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-danger">
+                    <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="error-message">
                         Valid email is required
                     </div>
                 </div>
         
-                <div class="mb-3">
-                    <label class="form-label">Phone</label>
+                <div class="form-group">
+                    <label>Phone</label>
                     <input type="tel" class="form-control" formControlName="phone">
-                    <div *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched" class="text-danger">
+                    <div *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched" class="error-message">
                         Phone number is required
                     </div>
                 </div>
         
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" formControlName="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="pending">Pending</option>
-                        </select>
-                    </div>
-        
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Role</label>
-                        <select class="form-select" formControlName="role">
-                            <option value="user">User</option>
-                            <option value="editor">Editor</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select formControlName="status">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label>Role</label>
+                    <select formControlName="role">
+                        <option value="user">User</option>
+                        <option value="editor">Editor</option>
+                        <option value="admin">Admin</option>
+                    </select>
                 </div>
             </form>
         </app-modal>

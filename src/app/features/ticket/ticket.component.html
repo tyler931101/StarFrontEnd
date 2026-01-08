@@ -30,15 +30,19 @@
                     [cdkDropListConnectedTo]="['inProgressList','resolvedList','testingList', 'closedList']" class="list"
                     (cdkDropListDropped)="drop($event)">
                     <div class="card todo" *ngFor="let t of filteredTodo" cdkDrag [cdkDragData]="t">
-                        <div class="card-title">{{ t.title }}</div>
-                        <div class="card-meta">
-                            <!-- <span class="badge">{{ t.id }}</span> -->
+                        <div class="card-header">
+                            <div class="card-title">{{ t.title }}</div>
                             <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'"
                                 [class.low]="t.priority==='low'" [class.urgent]="t.priority==='urgent'">{{ t.priority }}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">{{ t.description || 'No description' }}</p>
+                        </div>
+                        <div class="card-footer">
                             <span class="assignee">{{ t.assignee?.username || '' }}</span>
                             <span class="ms-auto">
-                                <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
-                                <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
+                                <i class="edit-ticket fas fa-pencil" (click)="openEdit(t)"></i>
+                                <i class="delete-ticket fas fa-trash" (click)="openDelete(t)"></i>
                             </span>
                         </div>
                     </div>
@@ -51,15 +55,19 @@
                     [cdkDropListConnectedTo]="['todoList','resolvedList','testingList','closedList']" class="list"
                     (cdkDropListDropped)="drop($event)">
                     <div class="card inProgress" *ngFor="let t of filteredInProgress" cdkDrag [cdkDragData]="t">
-                        <div class="card-title">{{ t.title }}</div>
-                        <div class="card-meta">
-                            <!-- <span class="badge">{{ t.id }}</span> -->
+                        <div class="card-header">
+                            <div class="card-title">{{ t.title }}</div>
                             <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'"
                                 [class.low]="t.priority==='low'" [class.urgent]="t.priority==='urgent'">{{ t.priority }}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">{{ t.description || 'No description' }}</p>
+                        </div>
+                        <div class="card-footer">
                             <span class="assignee">{{ t.assignee?.username || '' }}</span>
                             <span class="ms-auto">
-                                <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
-                                <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
+                                <i class="edit-ticket fas fa-pencil" (click)="openEdit(t)"></i>
+                                <i class="delete-ticket fas fa-trash" (click)="openDelete(t)"></i>
                             </span>
                         </div>
                     </div>
@@ -72,15 +80,19 @@
                     [cdkDropListConnectedTo]="['todoList','inProgressList','testingList','closedList']" class="list"
                     (cdkDropListDropped)="drop($event)">
                     <div class="card resolved" *ngFor="let t of filteredResolved" cdkDrag [cdkDragData]="t">
-                        <div class="card-title">{{ t.title }}</div>
-                        <div class="card-meta">
-                            <!-- <span class="badge">{{ t.id }}</span> -->
+                        <div class="card-header">
+                            <div class="card-title">{{ t.title }}</div>
                             <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'"
                                 [class.low]="t.priority==='low'" [class.urgent]="t.priority==='urgent'">{{ t.priority }}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">{{ t.description || 'No description' }}</p>
+                        </div>
+                        <div class="card-footer">
                             <span class="assignee">{{ t.assignee?.username || '' }}</span>
                             <span class="ms-auto">
-                                <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
-                                <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
+                                <i class="edit-ticket fas fa-pencil" (click)="openEdit(t)"></i>
+                                <i class="delete-ticket fas fa-trash" (click)="openDelete(t)"></i>
                             </span>
                         </div>
                     </div>
@@ -93,15 +105,19 @@
                     [cdkDropListConnectedTo]="['todoList','inProgressList','resolvedList','closedList']" class="list"
                     (cdkDropListDropped)="drop($event)">
                     <div class="card testing" *ngFor="let t of filteredTesting" cdkDrag [cdkDragData]="t">
-                        <div class="card-title">{{ t.title }}</div>
-                        <div class="card-meta">
-                            <!-- <span class="badge">{{ t.id }}</span> -->
+                        <div class="card-header">
+                            <div class="card-title">{{ t.title }}</div>
                             <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'"
                                 [class.low]="t.priority==='low'" [class.urgent]="t.priority==='urgent'">{{ t.priority }}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">{{ t.description || 'No description' }}</p>
+                        </div>
+                        <div class="card-footer">
                             <span class="assignee">{{ t.assignee?.username || '' }}</span>
                             <span class="ms-auto">
-                                <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
-                                <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
+                                <i class="edit-ticket fas fa-pencil" (click)="openEdit(t)"></i>
+                                <i class="delete-ticket fas fa-trash" (click)="openDelete(t)"></i>
                             </span>
                         </div>
                     </div>
@@ -114,15 +130,19 @@
                     [cdkDropListConnectedTo]="['todoList','inProgressList','resolvedList','testingList']" class="list"
                     (cdkDropListDropped)="drop($event)">
                     <div class="card closed" *ngFor="let t of filteredClosed" cdkDrag [cdkDragData]="t">
-                        <div class="card-title">{{ t.title }}</div>
-                        <div class="card-meta">
-                            <!-- <span class="badge">{{ t.id }}</span> -->
+                        <div class="card-header">
+                            <div class="card-title">{{ t.title }}</div>
                             <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'"
                                 [class.low]="t.priority==='low'" [class.urgent]="t.priority==='urgent'">{{ t.priority }}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">{{ t.description || 'No description' }}</p>
+                        </div>
+                        <div class="card-footer">
                             <span class="assignee">{{ t.assignee?.username || '' }}</span>
                             <span class="ms-auto">
-                                <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
-                                <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
+                                <i class="edit-ticket fas fa-pencil" (click)="openEdit(t)"></i>
+                                <i class="delete-ticket fas fa-trash" (click)="openDelete(t)"></i>
                             </span>
                         </div>
                     </div>
@@ -222,10 +242,12 @@
             </div>
         </app-modal>
         
-        <app-confirm *ngIf="isDeleteModalVisible" [title]="'Delete Ticket'"
-            [message]="'Are you sure you want to delete ' + (selectedTicket?.title || '') + '?'"
-            [details]="'This action cannot be undone.'" type="warning" confirmText="Delete" cancelText="Cancel"
-            confirmButtonClass="danger" [isVisible]="isDeleteModalVisible" (confirm)="confirmDelete()"
-            (closeModal)="closeDeleteModal()"></app-confirm>
+        <app-modal [title]="'Delete Ticket'" [size]="'sm'" [confirmText]="'Delete'" [cancelText]="'Cancel'"
+            [isVisible]="isDeleteModalVisible" (confirm)="confirmDelete()" (closeModal)="closeDeleteModal()">
+            <div class="text-center">
+                <p>Are you sure you want to delete this ticket?</p>
+                <p class="text-muted">This action cannot be undone.</p>
+            </div>
+        </app-modal>
     </div>
 </div>

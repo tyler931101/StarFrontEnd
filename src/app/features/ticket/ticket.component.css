@@ -76,26 +76,43 @@
 .card {
     background: #fff;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-    padding: 12px 16px;
+    padding: 0;
     margin-bottom: 10px;
     min-height: 150px;
-}
- 
-.card-title {
-    font-weight: 600;
-}
- 
-.card-meta {
     display: flex;
-    gap: 8px;
-    margin-top: 6px;
+    flex-direction: column;
+}
+
+.card-header {
+    padding: 12px 16px 8px;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
 }
-.card-meta .assignee {
-    background: var(--surface-muted, #f3f4f6);
-    padding: 2px 6px;
-    border-radius: 999px;
-    font-size: 12px;
+
+.card-title {
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+}
+
+.card-body {
+    padding: 12px 16px;
+    flex: 1;
+}
+
+.card-description {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.card-footer {
+    padding: 8px 16px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
  
 .badge {
@@ -107,7 +124,7 @@
 }
  
 .priority {
-    border-radius: 999px;
+    border-radius: 5px;
     font-size: 12px;
     padding: 2px 8px;
     text-transform: capitalize;
@@ -117,6 +134,25 @@
 .priority.medium { background: #e0f2fe; color: #0369a1; }
 .priority.low { background: #ecfdf5; color: #047857; }
 .priority.urgent { background: #ecfdf5; color: #b91c1c; }
+
+.edit-ticket {
+    margin-right: 10px;
+    color: #ef4444;
+    cursor: pointer;
+}
+
+.edit-ticket:hover {
+    color: #b91c1c;
+}
+
+.delete-ticket {
+    color: #0078d7;
+    cursor: pointer;
+}
+
+.delete-ticket:hover {
+    color: #005fa3;
+}
  
 @media (max-width: 900px) {
     .board { grid-template-columns: 1fr; }
