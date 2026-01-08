@@ -18,8 +18,8 @@
                         <div class="bar bar-in" [style.width.%]="(statusCounts.in_progress / maxCount) * 100">
                             <span>In Progress {{ statusCounts.in_progress }}</span>
                         </div>
-                        <div class="bar bar-done" [style.width.%]="(statusCounts.done / maxCount) * 100">
-                            <span>Done {{ statusCounts.done }}</span>
+                        <div class="bar bar-closed" [style.width.%]="(statusCounts.closed / maxCount) * 100">
+                            <span>Closed {{ statusCounts.closed }}</span>
                         </div>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                             <div class="legend">
                                 <div class="legend-item"><span class="dot todo"></span>To Do {{ statusCounts.todo }}</div>
                                 <div class="legend-item"><span class="dot in"></span>In Progress {{ statusCounts.in_progress }}</div>
-                                <div class="legend-item"><span class="dot done"></span>Done {{ statusCounts.done }}</div>
+                                <div class="legend-item"><span class="dot closed"></span>Closed {{ statusCounts.closed }}</div>
                             </div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                     <div class="kpi-grid">
                         <div class="kpi todo">To Do <strong>{{ statusCounts.todo }}</strong></div>
                         <div class="kpi in">In Progress <strong>{{ statusCounts.in_progress }}</strong></div>
-                        <div class="kpi done">Done <strong>{{ statusCounts.done }}</strong></div>
+                        <div class="kpi closed">Closed <strong>{{ statusCounts.closed }}</strong></div>
                     </div>
                 </div>
                 <div class="chart-card">
@@ -50,12 +50,12 @@
                     <div class="stacked-bar">
                         <div class="segment todo" [style.width.%]="distPercent.todo"></div>
                         <div class="segment in" [style.width.%]="distPercent.in_progress"></div>
-                        <div class="segment done" [style.width.%]="distPercent.done"></div>
+                        <div class="segment closed" [style.width.%]="distPercent.closed"></div>
                     </div>
                     <div class="legend">
                         <div class="legend-item"><span class="dot todo"></span>To Do {{ statusCounts.todo }}</div>
                         <div class="legend-item"><span class="dot in"></span>In Progress {{ statusCounts.in_progress }}</div>
-                        <div class="legend-item"><span class="dot done"></span>Done {{ statusCounts.done }}</div>
+                        <div class="legend-item"><span class="dot closed"></span>Closed {{ statusCounts.closed }}</div>
                     </div>
                 </div>
                 <div class="chart-card">
@@ -70,8 +70,8 @@
                             <div class="radial-label">In Progress {{ statusCounts.in_progress }}</div>
                         </div>
                         <div class="radial">
-                            <div class="ring" [style.background]="radialBg('#047857', (statusCounts.done / maxCount) * 100)"></div>
-                            <div class="radial-label">Done {{ statusCounts.done }}</div>
+                            <div class="ring" [style.background]="radialBg('#047857', (statusCounts.closed / maxCount) * 100)"></div>
+                            <div class="radial-label">Closed {{ statusCounts.closed }}</div>
                         </div>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                                 <div class="vbars">
                                     <div class="vbar todo" [style.height.%]="barHeightPercent(g.todo)"></div>
                                     <div class="vbar in" [style.height.%]="barHeightPercent(g.in_progress)"></div>
-                                    <div class="vbar done" [style.height.%]="barHeightPercent(g.done)"></div>
+                                    <div class="vbar closed" [style.height.%]="barHeightPercent(g.closed)"></div>
                                 </div>
                                 <div class="vlabel">{{ g.idx }}</div>
                             </div>
@@ -107,12 +107,12 @@
                         </g>
                         <path [attr.d]="linePath(seriesTodo, 480, 240, 40, 20)" class="line-path todo"></path>
                         <path [attr.d]="linePath(seriesInProgress, 480, 240, 40, 20)" class="line-path in"></path>
-                        <path [attr.d]="linePath(seriesDone, 480, 240, 40, 20)" class="line-path done"></path>
+                        <path [attr.d]="linePath(seriesClosed, 480, 240, 40, 20)" class="line-path closed"></path>
                     </svg>
                     <div class="legend">
                         <div class="legend-item"><span class="dot todo"></span>To Do</div>
                         <div class="legend-item"><span class="dot in"></span>In Progress</div>
-                        <div class="legend-item"><span class="dot done"></span>Done</div>
+                        <div class="legend-item"><span class="dot closed"></span>Closed</div>
                     </div>
                 </div>
             </div>
@@ -128,7 +128,7 @@
                     <option value="">All Statuses</option>
                     <option value="todo">To Do</option>
                     <option value="in_progress">In Progress</option>
-                    <option value="done">Done</option>
+                    <option value="closed">Closed</option>
                 </select>
             </div>
 
@@ -142,8 +142,8 @@
                         <div class="bar bar-in" [style.width.%]="(filteredChartCounts.in_progress / filteredMaxCount) * 100">
                             <span>In Progress {{ filteredChartCounts.in_progress }}</span>
                         </div>
-                        <div class="bar bar-done" [style.width.%]="(filteredChartCounts.done / filteredMaxCount) * 100">
-                            <span>Done {{ filteredChartCounts.done }}</span>
+                        <div class="bar bar-done" [style.width.%]="(filteredChartCounts.closed / filteredMaxCount) * 100">
+                            <span>Closed {{ filteredChartCounts.closed }}</span>
                         </div>
                     </div>
                 </div>
@@ -153,7 +153,7 @@
                     <div class="legend">
                         <div class="legend-item"><span class="dot todo"></span>To Do {{ filteredChartCounts.todo }}</div>
                         <div class="legend-item"><span class="dot in"></span>In Progress {{ filteredChartCounts.in_progress }}</div>
-                        <div class="legend-item"><span class="dot done"></span>Done {{ filteredChartCounts.done }}</div>
+                        <div class="legend-item"><span class="dot closed"></span>Closed {{ filteredChartCounts.closed }}</div>
                     </div>
                 </div>
                 <div class="chart-card">
@@ -161,7 +161,7 @@
                     <div class="stacked-bar">
                         <div class="segment todo" [style.width.%]="filteredDistPercent.todo"></div>
                         <div class="segment in" [style.width.%]="filteredDistPercent.in_progress"></div>
-                        <div class="segment done" [style.width.%]="filteredDistPercent.done"></div>
+                        <div class="segment closed" [style.width.%]="filteredDistPercent.closed"></div>
                     </div>
                 </div>
                 <div class="chart-card">
@@ -172,7 +172,7 @@
                             <div class="stacked-bar">
                                 <div class="segment todo" [style.width.%]="g.percents.todo"></div>
                                 <div class="segment in" [style.width.%]="g.percents.in_progress"></div>
-                                <div class="segment done" [style.width.%]="g.percents.done"></div>
+                                <div class="segment closed" [style.width.%]="g.percents.closed"></div>
                             </div>
                             <div class="group-total">Total {{ g.total }}</div>
                         </div>
@@ -187,7 +187,7 @@
                                 <div class="vbars">
                                     <div class="vbar todo" [style.height.%]="(g.counts.todo / groupBarMaxCount) * 100"></div>
                                     <div class="vbar in" [style.height.%]="(g.counts.in_progress / groupBarMaxCount) * 100"></div>
-                                    <div class="vbar done" [style.height.%]="(g.counts.done / groupBarMaxCount) * 100"></div>
+                                    <div class="vbar closed" [style.height.%]="(g.counts.closed / groupBarMaxCount) * 100"></div>
                                 </div>
                                 <div class="vlabel">{{ g.user }}</div>
                             </div>

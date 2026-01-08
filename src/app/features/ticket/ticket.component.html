@@ -8,7 +8,7 @@
                 
                 <select class="filter-select" [(ngModel)]="selectedAssignee" (change)="applyFilter()">
                     <option value="">All Assignees</option>
-                    <option *ngFor="let u of users" [value]="u">{{ u }}</option>
+                    <option *ngFor="let u of assignees" [value]="u.id">{{ u.username }}</option>
                 </select>
                 <select class="filter-select" [(ngModel)]="selectedStatus" (change)="applyFilter()">
                     <option value="">All Statuses</option>
@@ -16,7 +16,7 @@
                     <option value="in_progress">In Progress</option>
                     <option value="resolved">Resolved</option>
                     <option value="testing">Testing</option>
-                    <option value="done">Done</option>
+                    <option value="closed">Closed</option>
                 </select>
             </div>
                 
@@ -27,15 +27,15 @@
             <div class="column">
                 <div class="column-header">To Do</div>
                 <div cdkDropList [id]="'todoList'" [cdkDropListData]="filteredTodo"
-                    [cdkDropListConnectedTo]="['inProgressList','resolvedList','testingList','doneList']" class="list"
+                    [cdkDropListConnectedTo]="['inProgressList','resolvedList','testingList', 'closedList']" class="list"
                     (cdkDropListDropped)="drop($event)">
-                    <div class="card" *ngFor="let t of filteredTodo" cdkDrag [cdkDragData]="t">
+                    <div class="card todo" *ngFor="let t of filteredTodo" cdkDrag [cdkDragData]="t">
                         <div class="card-title">{{ t.title }}</div>
                         <div class="card-meta">
-                            <span class="badge">{{ t.id }}</span>
+                            <!-- <span class="badge">{{ t.id }}</span> -->
                             <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'"
-                                [class.low]="t.priority==='low'">{{ t.priority }}</span>
-                            <span class="assignee">{{ t.assignedTo }}</span>
+                                [class.low]="t.priority==='low'" [class.urgent]="t.priority==='urgent'">{{ t.priority }}</span>
+                            <span class="assignee">{{ t.assignee?.username || '' }}</span>
                             <span class="ms-auto">
                                 <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
                                 <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
@@ -48,15 +48,15 @@
             <div class="column">
                 <div class="column-header">In Progress</div>
                 <div cdkDropList [id]="'inProgressList'" [cdkDropListData]="filteredInProgress"
-                    [cdkDropListConnectedTo]="['todoList','resolvedList','testingList','doneList']" class="list"
+                    [cdkDropListConnectedTo]="['todoList','resolvedList','testingList','closedList']" class="list"
                     (cdkDropListDropped)="drop($event)">
-                    <div class="card" *ngFor="let t of filteredInProgress" cdkDrag [cdkDragData]="t">
+                    <div class="card inProgress" *ngFor="let t of filteredInProgress" cdkDrag [cdkDragData]="t">
                         <div class="card-title">{{ t.title }}</div>
                         <div class="card-meta">
-                            <span class="badge">{{ t.id }}</span>
+                            <!-- <span class="badge">{{ t.id }}</span> -->
                             <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'"
-                                [class.low]="t.priority==='low'">{{ t.priority }}</span>
-                            <span class="assignee">{{ t.assignedTo }}</span>
+                                [class.low]="t.priority==='low'" [class.urgent]="t.priority==='urgent'">{{ t.priority }}</span>
+                            <span class="assignee">{{ t.assignee?.username || '' }}</span>
                             <span class="ms-auto">
                                 <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
                                 <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
@@ -69,15 +69,15 @@
             <div class="column">
                 <div class="column-header">Resolved</div>
                 <div cdkDropList [id]="'resolvedList'" [cdkDropListData]="filteredResolved"
-                    [cdkDropListConnectedTo]="['todoList','inProgressList','testingList','doneList']" class="list"
+                    [cdkDropListConnectedTo]="['todoList','inProgressList','testingList','closedList']" class="list"
                     (cdkDropListDropped)="drop($event)">
-                    <div class="card" *ngFor="let t of filteredResolved" cdkDrag [cdkDragData]="t">
+                    <div class="card resolved" *ngFor="let t of filteredResolved" cdkDrag [cdkDragData]="t">
                         <div class="card-title">{{ t.title }}</div>
                         <div class="card-meta">
-                            <span class="badge">{{ t.id }}</span>
+                            <!-- <span class="badge">{{ t.id }}</span> -->
                             <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'"
-                                [class.low]="t.priority==='low'">{{ t.priority }}</span>
-                            <span class="assignee">{{ t.assignedTo }}</span>
+                                [class.low]="t.priority==='low'" [class.urgent]="t.priority==='urgent'">{{ t.priority }}</span>
+                            <span class="assignee">{{ t.assignee?.username || '' }}</span>
                             <span class="ms-auto">
                                 <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
                                 <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
@@ -90,15 +90,15 @@
             <div class="column">
                 <div class="column-header">Testing</div>
                 <div cdkDropList [id]="'testingList'" [cdkDropListData]="filteredTesting"
-                    [cdkDropListConnectedTo]="['todoList','inProgressList','resolvedList','doneList']" class="list"
+                    [cdkDropListConnectedTo]="['todoList','inProgressList','resolvedList','closedList']" class="list"
                     (cdkDropListDropped)="drop($event)">
-                    <div class="card" *ngFor="let t of filteredTesting" cdkDrag [cdkDragData]="t">
+                    <div class="card testing" *ngFor="let t of filteredTesting" cdkDrag [cdkDragData]="t">
                         <div class="card-title">{{ t.title }}</div>
                         <div class="card-meta">
-                            <span class="badge">{{ t.id }}</span>
+                            <!-- <span class="badge">{{ t.id }}</span> -->
                             <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'"
-                                [class.low]="t.priority==='low'">{{ t.priority }}</span>
-                            <span class="assignee">{{ t.assignedTo }}</span>
+                                [class.low]="t.priority==='low'" [class.urgent]="t.priority==='urgent'">{{ t.priority }}</span>
+                            <span class="assignee">{{ t.assignee?.username || '' }}</span>
                             <span class="ms-auto">
                                 <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
                                 <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
@@ -110,16 +110,16 @@
 
             <div class="column">
                 <div class="column-header">Closed</div>
-                <div cdkDropList [id]="'doneList'" [cdkDropListData]="filteredDone"
+                <div cdkDropList [id]="'closedList'" [cdkDropListData]="filteredClosed"
                     [cdkDropListConnectedTo]="['todoList','inProgressList','resolvedList','testingList']" class="list"
                     (cdkDropListDropped)="drop($event)">
-                    <div class="card" *ngFor="let t of filteredDone" cdkDrag [cdkDragData]="t">
+                    <div class="card closed" *ngFor="let t of filteredClosed" cdkDrag [cdkDragData]="t">
                         <div class="card-title">{{ t.title }}</div>
                         <div class="card-meta">
-                            <span class="badge">{{ t.id }}</span>
+                            <!-- <span class="badge">{{ t.id }}</span> -->
                             <span class="priority" [class.high]="t.priority==='high'" [class.medium]="t.priority==='medium'"
-                                [class.low]="t.priority==='low'">{{ t.priority }}</span>
-                            <span class="assignee">{{ t.assignedTo }}</span>
+                                [class.low]="t.priority==='low'" [class.urgent]="t.priority==='urgent'">{{ t.priority }}</span>
+                            <span class="assignee">{{ t.assignee?.username || '' }}</span>
                             <span class="ms-auto">
                                 <button class="btn btn-sm btn-outline-primary" (click)="openEdit(t)">Edit</button>
                                 <button class="btn btn-sm btn-outline-danger" (click)="openDelete(t)">Delete</button>
@@ -135,10 +135,16 @@
             <div class="form-group">
                 <label>Title</label>
                 <input type="text" class="form-control" [(ngModel)]="editTitle">
+                <div class="error-message" *ngIf="editAttempted && !editTitle">
+                    <small>Title is required.</small>
+                </div>
             </div>
             <div class="form-group">
                 <label>Description</label>
                 <textarea class="form-control" rows="3" [(ngModel)]="editDescription"></textarea>
+                <div class="error-message" *ngIf="editAttempted && !editDescription">
+                    <small>Description is required.</small>
+                </div>
             </div>
             <div class="form-group">
                 <label>Priority</label>
@@ -146,23 +152,27 @@
                     <option value="high">High</option>
                     <option value="medium">Medium</option>
                     <option value="low">Low</option>
+                    <option value="urgent">Urgent</option>
                 </select>
+                <div class="error-message" *ngIf="editAttempted && !editPriority">
+                    <small>Priority is required.</small>
+                </div>
             </div>
             <div class="form-group">
                 <label>Assignee</label>
-                <select [(ngModel)]="editAssignedToId">
+                <select [(ngModel)]="editAssignedTo">
                     <option *ngFor="let u of assignees" [value]="u.id">{{ u.username }}</option>
                 </select>
+                <div class="error-message" *ngIf="editAttempted && !editAssignedTo">
+                    <small>Assignee is required.</small>
+                </div>
             </div>
             <div class="form-group">
-                <label>Status</label>
-                <select [(ngModel)]="editStatus">
-                    <option value="todo">To Do</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="testing">Testing</option>
-                    <option value="done">Done</option>
-                </select>
+                <label>Due Date</label>
+                <input type="date" [(ngModel)]="editDueDate" />
+                <div class="error-message" *ngIf="editAttempted && !editDueDate">
+                    <small>Due Date is required.</small>
+                </div>
             </div>
         </app-modal>
         
@@ -170,11 +180,17 @@
             [isVisible]="isCreateModalVisible" (confirm)="saveCreate()" (closeModal)="closeCreateModal()">
             <div class="form-group">
                 <label>Title</label>
-                <input type="text" [(ngModel)]="editTitle">
+                <input type="text" [(ngModel)]="editTitle" />
+                <div class="error-message" *ngIf="createAttempted && !editTitle">
+                    <small>Title is required.</small>
+                </div>
             </div>
             <div class="form-group">
                 <label>Description</label>
                 <textarea class="form-control" rows="3" [(ngModel)]="editDescription"></textarea>
+                <div class="error-message" *ngIf="createAttempted && !editDescription">
+                    <small>Description is required.</small>
+                </div>
             </div>
             <div class="form-group">
                 <label>Priority</label>
@@ -182,13 +198,27 @@
                     <option value="high">High</option>
                     <option value="medium">Medium</option>
                     <option value="low">Low</option>
+                    <option value="urgent">Urgent</option>
                 </select>
+                <div class="error-message" *ngIf="createAttempted && !editPriority">
+                    <small>Priority is required.</small>
+                </div>
             </div>
             <div class="form-group">
                 <label>Assignee</label>
-                <select [(ngModel)]="editAssignedToId">
+                <select [(ngModel)]="editAssignedTo">
                     <option *ngFor="let u of assignees" [value]="u.id">{{ u.username }}</option>
                 </select>
+                <div class="error-message" *ngIf="createAttempted && !editAssignedTo">
+                    <small>Assignee is required.</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Due Date</label>
+                <input type="date" [(ngModel)]="editDueDate" />
+                <div class="error-message" *ngIf="createAttempted && !editDueDate">
+                    <small>Due Date is required.</small>
+                </div>
             </div>
         </app-modal>
         

@@ -15,7 +15,6 @@ import { Ticket, TicketStatus } from './models/ticket.model';
   styleUrls: ['./ticket.component.css'],
 })
 export class TicketComponent implements OnInit {
-  users: string[] = [];
   assignees: User[] = [];
 
   todo: Ticket[] = [];
@@ -26,17 +25,17 @@ export class TicketComponent implements OnInit {
 
   testing: Ticket[] = [];
 
-  done: Ticket[] = [];
+  closed: Ticket[] = [];
 
   filteredTodo = [...this.todo];
   filteredInProgress = [...this.inProgress];
   filteredResolved = [...this.resolved];
   filteredTesting = [...this.testing];
-  filteredDone = [...this.done];
+  filteredClosed = [...this.closed];
 
   searchTerm = '';
   selectedAssignee = '';
-  selectedStatus: '' | 'todo' | 'in_progress' | 'resolved' | 'testing' | 'done' = '';
+  selectedStatus: '' | 'todo' | 'in_progress' | 'resolved' | 'testing' | 'closed' = '';
 
   isEditModalVisible = false;
   isCreateModalVisible = false;
@@ -44,10 +43,14 @@ export class TicketComponent implements OnInit {
   selectedTicket: Ticket | null = null;
   editTitle = '';
   editDescription = '';
-  editPriority: 'low' | 'medium' | 'high' = 'medium';
-  editAssignedTo = '';
-  editAssignedToId: number | null = null;
-  editStatus: 'todo' | 'in_progress' | 'resolved' | 'testing' | 'done' = 'todo';
+  editPriority: 'low' | 'medium' | 'high' | 'urgent' = 'medium';
+  editAssignedTo: string | null = null;
+  editStatus: 'todo' | 'in_progress' | 'resolved' | 'testing' | 'closed' = 'todo';
+  editDueDate: string | null = null;
+  editAttempted = false;
+  editError: string | null = null;
+  createAttempted = false;
+  createError: string | null = null;
 
   constructor(
     private ticketService: TicketService
@@ -77,12 +80,12 @@ export class TicketComponent implements OnInit {
         this.inProgress = items.filter(t => t.status === 'in_progress');
         this.resolved = items.filter(t => t.status === 'resolved');
         this.testing = items.filter(t => t.status === 'testing');
-        this.done = items.filter(t => t.status === 'done');
+        this.closed = items.filter(t => t.status === 'closed');
         this.filteredTodo = [...this.todo];
         this.filteredInProgress = [...this.inProgress];
         this.filteredResolved = [...this.resolved];
         this.filteredTesting = [...this.testing];
-        this.filteredDone = [...this.done];
+        this.filteredClosed = [...this.closed];
         this.applyFilter();
       }
     });
@@ -92,8 +95,10 @@ export class TicketComponent implements OnInit {
     this.editTitle = '';
     this.editDescription = '';
     this.editPriority = 'medium';
-    this.editAssignedTo = this.users.length > 0 ? this.users[0] : '';
+    this.editAssignedTo = this.assignees.length > 0 ? this.assignees[0].id : null;
     this.editStatus = 'todo';
+    this.createAttempted = false;
+    this.createError = null;
     this.isCreateModalVisible = true;
   }
 
@@ -102,14 +107,14 @@ export class TicketComponent implements OnInit {
   }
 
   saveCreate() {
-    const title = this.editTitle.trim();
-    if (!title) { this.closeCreateModal(); return; }
+    const invalid = !this.editTitle || !this.editDescription || !this.editPriority || !this.editAssignedTo || !this.editDueDate;
+    if (invalid) { this.createAttempted = true; return; }
     const dto = { 
-      title, 
+      title: this.editTitle,
       description: this.editDescription,
       priority: this.editPriority, 
-      status: this.editStatus as TicketStatus, 
-      assignedToId: this.editAssignedToId ?? undefined
+      assignedTo: this.editAssignedTo ?? undefined,
+      dueDate: this.editDueDate as string
     };
     this.ticketService.createTicket(dto).subscribe({
       next: (created) => {
@@ -117,12 +122,14 @@ export class TicketComponent implements OnInit {
         else if (created.status === 'in_progress') this.inProgress.unshift(created);
         else if (created.status === 'resolved') this.resolved.unshift(created);
         else if (created.status === 'testing') this.testing.unshift(created);
-        else this.done.unshift(created);
+        else this.closed.unshift(created);
         this.applyFilter();
         this.closeCreateModal();
       },
-      error: () => {
-        this.closeCreateModal();
+      error: (err) => {
+        const msg = (err && (err.error?.message || err.message)) || 'Failed to create ticket.';
+        this.createError = msg;
+        this.createAttempted = true;
       }
     });
 
@@ -131,16 +138,16 @@ export class TicketComponent implements OnInit {
   drop(event: CdkDragDrop<Ticket[]>) {
     const prevId = event.previousContainer.id;
     const targetId = event.container.id;
-
+    
     const getArr = (id: string) => {
       if (id === 'todoList') return this.todo;
       if (id === 'inProgressList') return this.inProgress;
       if (id === 'resolvedList') return this.resolved;
       if (id === 'testingList') return this.testing;
-      if (id === 'doneList') return this.done;
+      if (id === 'closedList') return this.closed;
       return this.todo;
     };
-
+  
     if (prevId !== targetId) {
       const item = event.item.data as { id: string };
       const src = getArr(prevId);
@@ -148,15 +155,27 @@ export class TicketComponent implements OnInit {
       const idx = src.findIndex(x => x.id === item.id);
       if (idx > -1) {
         const [moved] = src.splice(idx, 1);
+        const originalStatus = moved.status;
+        
         let newStatus: TicketStatus = 'todo';
         if (targetId === 'todoList') newStatus = 'todo';
         else if (targetId === 'inProgressList') newStatus = 'in_progress';
         else if (targetId === 'resolvedList') newStatus = 'resolved';
         else if (targetId === 'testingList') newStatus = 'testing';
-        else if (targetId === 'doneList') newStatus = 'done';
+        else if (targetId === 'closedList') newStatus = 'closed';
+  
         moved.status = newStatus;
         dst.splice(event.currentIndex, 0, moved);
-        this.ticketService.moveTicket(moved.id, newStatus).subscribe({ next: () => {}, error: () => {} });
+        this.ticketService.moveTicket(moved.id, newStatus).subscribe({
+          next: () => {},
+          error: () => {
+            const dstIdx = dst.findIndex(x => x.id === moved.id);
+            if (dstIdx > -1) dst.splice(dstIdx, 1);
+            moved.status = originalStatus;
+            src.splice(idx, 0, moved);
+            this.applyFilter();
+          }
+        });
       }
     }
     this.applyFilter();
@@ -179,18 +198,30 @@ export class TicketComponent implements OnInit {
     this.filteredInProgress = this.inProgress.filter(match);
     this.filteredResolved = this.resolved.filter(match);
     this.filteredTesting = this.testing.filter(match);
-    this.filteredDone = this.done.filter(match);
+    this.filteredClosed = this.closed.filter(match);
   }
 
   openEdit(ticket: Ticket) {
     this.selectedTicket = ticket;
     this.editTitle = ticket.title;
     this.editDescription = ticket.description || '';
-    this.editPriority = ticket.priority;
-    this.editAssignedTo = ticket.assignedTo;
-    const matched = this.assignees.find(a => a.username === ticket.assignedTo);
-    this.editAssignedToId = matched ? matched.id : null;
+    const validPriorities = ['low', 'medium', 'high'] as const;
+    this.editPriority = (validPriorities as readonly string[]).includes(ticket.priority)
+      ? ticket.priority as 'low' | 'medium' | 'high'
+      : 'medium';
+    const matchedById = this.assignees.find(a => a.id === ticket.assignedTo);
+    const matchedByPopulateId = ticket.assignee?.id
+      ? this.assignees.find(a => a.id === ticket.assignee!.id)
+      : undefined;
+    const matchedByPopulateUsername = ticket.assignee?.username
+      ? this.assignees.find(a => a.username === ticket.assignee!.username)
+      : undefined;
+    const matched = matchedById || matchedByPopulateId || matchedByPopulateUsername;
+    this.editAssignedTo = matched ? matched.id : ticket.assignedTo || null;
     this.editStatus = ticket.status;
+    this.editDueDate = ticket.dueDate ? new Date(ticket.dueDate).toISOString().slice(0, 10) : null;
+    this.editAttempted = false;
+    this.editError = null;
     this.isEditModalVisible = true;
   }
 
@@ -201,15 +232,17 @@ export class TicketComponent implements OnInit {
 
   saveEdit() {
     if (!this.selectedTicket) return;
+    const invalid = !this.editTitle || !this.editDescription || !this.editPriority || !this.editAssignedTo || !this.editDueDate;
+    if (invalid) { this.editAttempted = true; return; }
     const id = this.selectedTicket.id;
     const dto = {
       title: this.editTitle.trim() || undefined,
       description: this.editDescription,
       priority: this.editPriority,
-      assignedToId: this.editAssignedToId ?? undefined,
+      assignedTo: this.editAssignedTo ?? undefined,
+      dueDate: this.editDueDate ?? this.selectedTicket?.dueDate ?? new Date().toISOString(),
       status: this.editStatus as TicketStatus,
     };
-    const prevStatus = this.selectedTicket.status;
     this.ticketService.updateTicket(id, dto).subscribe({
       next: (updated: Ticket) => {
         const removeFrom = (arr: any[]) => {
@@ -220,17 +253,17 @@ export class TicketComponent implements OnInit {
         removeFrom(this.inProgress);
         removeFrom(this.resolved);
         removeFrom(this.testing);
-        removeFrom(this.done);
+        removeFrom(this.closed);
         if (updated.status === 'todo') this.todo.unshift(updated);
         else if (updated.status === 'in_progress') this.inProgress.unshift(updated);
         else if (updated.status === 'resolved') this.resolved.unshift(updated);
         else if (updated.status === 'testing') this.testing.unshift(updated);
-        else this.done.unshift(updated);
+        else this.closed.unshift(updated);
         this.applyFilter();
         this.closeEditModal();
       },
-      error: () => {
-        this.closeEditModal();
+      error: (err) => {
+        this.editError = (err && (err.error?.message || err.message)) || 'Failed to update ticket.';
       }
     });
   }
@@ -258,7 +291,7 @@ export class TicketComponent implements OnInit {
         remove(this.inProgress);
         remove(this.resolved);
         remove(this.testing);
-        remove(this.done);
+        remove(this.closed);
         this.applyFilter();
         this.closeDeleteModal();
       },

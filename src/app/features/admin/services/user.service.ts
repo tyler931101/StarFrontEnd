@@ -43,19 +43,19 @@ export class UserService {
     );
   }
 
-  getUser(id: number): Observable<User> {
+  getUser(id: string): Observable<User> {
     return this.api.get<any>(`admin/users/${id}`).pipe(
       map((res: any) => res.data ?? res.user ?? res)
     );
   }
 
-  updateUser(id: number, userData: Partial<User>): Observable<User> {
+  updateUser(id: string, userData: Partial<User>): Observable<User> {
     return this.api.put<any>(`admin/users/${id}`, userData).pipe(
       map((res: any) => res.data ?? res.user ?? res)
     );
   }
 
-  deleteUser(id: number): Observable<boolean> {
+  deleteUser(id: string): Observable<boolean> {
     return this.api.delete<any>(`admin/users/${id}`).pipe(
       map((res: any) => {
         if (typeof res === 'boolean') return res;

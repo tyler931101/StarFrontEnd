@@ -19,14 +19,13 @@ export class TicketService {
 
     return this.api.get<any>('ticket', httpParams).pipe(
       map((res: any) => {
-        if (res?.data) {
-          const d = res.data;
+        if (res?.result) {
           return {
-            tickets: d.tickets ?? d.items ?? [],
+            tickets: res.result ?? [],
           } as TicketListResponse;
         }
         return {
-          tickets: res.tickets ?? res.items ?? [],
+          tickets: res.result ?? [],
         } as TicketListResponse;
       })
     );

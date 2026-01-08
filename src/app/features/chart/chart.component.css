@@ -33,19 +33,19 @@
  .bar { height: 32px; display: flex; align-items: center; color: #111; border-radius: 8px; padding-left: 10px; background: #e5e7eb; }
  .bar-todo { background: #fee2e2; }
  .bar-in { background: #e0f2fe; }
- .bar-done { background: #ecfdf5; }
+ .bar-closed { background: #ecfdf5; }
  .pie-chart { width: 220px; height: 220px; border-radius: 50%; margin: 8px auto; position: relative; }
  .pie-center { position: absolute; inset: 32px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; }
  .legend { display: grid; gap: 6px; font-size: 12px; }
  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
  .dot.todo { background: #b91c1c; }
  .dot.in { background: #0369a1; }
- .dot.done { background: #047857; }
+ .dot.closed { background: #047857; }
  .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
  .kpi { padding: 12px; border-radius: 12px; text-align: center; background: var(--surface-muted, #f3f4f6); }
  .kpi.todo { background: #fee2e2; }
  .kpi.in { background: #e0f2fe; }
-.kpi.done { background: #ecfdf5; }
+.kpi.closed { background: #ecfdf5; }
 
 @media (max-width: 900px) {
     .charts-row { grid-template-columns: 1fr; }
@@ -55,7 +55,7 @@
 .stacked-bar .segment { height: 100%; }
 .stacked-bar .segment.todo { background: #b91c1c; }
 .stacked-bar .segment.in { background: #0369a1; }
-.stacked-bar .segment.done { background: #047857; }
+.stacked-bar .segment.closed { background: #047857; }
 
 .radial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .radial { display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -77,7 +77,7 @@
 .vbar { min-height: 2px; }
 .vbar.todo { background: #b91c1c; }
 .vbar.in { background: #0369a1; }
-.vbar.done { background: #10b981; }
+.vbar.closed { background: #10b981; }
 .vlabel { max-width: 120px; text-align: center; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Line chart styles */
@@ -87,4 +87,4 @@
 .line-path { fill: none; stroke-width: 2; }
 .line-path.todo { stroke: #b91c1c; }
 .line-path.in { stroke: #0369a1; }
-.line-path.done { stroke: #10b981; }
+.line-path.closed { stroke: #10b981; }

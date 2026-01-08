@@ -23,7 +23,7 @@ export class ChartService {
       const counts = [
         { status: 'todo', count: items.filter(t => t.status === 'todo').length },
         { status: 'in_progress', count: items.filter(t => t.status === 'in_progress').length },
-        { status: 'done', count: items.filter(t => t.status === 'done').length },
+        { status: 'closed', count: items.filter(t => t.status === 'closed').length },
       ] as any;
       const total = counts.reduce((s: number, c: any) => s + c.count, 0);
       return of({ counts, total });

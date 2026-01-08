@@ -1,13 +1,18 @@
-export type TicketStatus = 'todo' | 'in_progress' | 'resolved' | 'testing' | 'done';
+export type TicketStatus = 'todo' | 'in_progress' | 'resolved' | 'testing' | 'closed';
 
 export interface Ticket {
   id: string;
   title: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   status: TicketStatus;
   assignedTo: string;
-  assignedToId?: number;
+  assignee?: {
+    id: string;
+    username: string;
+    email?: string;
+  };
   description?: string;
+  dueDate: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -24,18 +29,16 @@ export interface TicketListResponse {
 
 export interface CreateTicketDto {
   title: string;
-  priority: 'low' | 'medium' | 'high';
-  status: TicketStatus;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   assignedTo?: string;
-  assignedToId?: number;
   description?: string;
+  dueDate: string;
 }
 
 export interface UpdateTicketDto {
   title?: string;
-  priority?: 'low' | 'medium' | 'high';
-  status?: TicketStatus;
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
   assignedTo?: string;
-  assignedToId?: number;
   description?: string;
+  dueDate: string;
 }

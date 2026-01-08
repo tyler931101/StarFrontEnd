@@ -20,7 +20,7 @@ export class ChartComponent implements OnInit {
   lineLabels: number[] = Array.from({ length: 12 }, (_, i) => i + 1);
   seriesTodo: number[] = [];
   seriesInProgress: number[] = [];
-  seriesDone: number[] = [];
+  seriesClosed: number[] = [];
 
   constructor(private chartService: ChartService) {}
 
@@ -36,14 +36,14 @@ export class ChartComponent implements OnInit {
 
   private loadMockTickets() {
     this.tickets = [
-      { id: 'T-101', title: 'Set up project board', priority: 'medium', status: 'todo', assignedTo: 'Alice' },
-      { id: 'T-102', title: 'Design ticket model', priority: 'high', status: 'todo', assignedTo: 'Bob' },
-      { id: 'T-103', title: 'Create API stubs', priority: 'low', status: 'todo', assignedTo: 'Charlie' },
-      { id: 'T-201', title: 'Implement login', priority: 'high', status: 'in_progress', assignedTo: 'Dana' },
-      { id: 'T-202', title: 'User list pagination', priority: 'medium', status: 'in_progress', assignedTo: 'Alice' },
-      { id: 'T-301', title: 'Add global styles', priority: 'low', status: 'done', assignedTo: 'Bob' },
-      { id: 'T-302', title: 'Fix modal bugs', priority: 'medium', status: 'done', assignedTo: 'Alice' },
-      { id: 'T-303', title: 'Refactor API service', priority: 'high', status: 'done', assignedTo: 'Charlie' },
+      { id: 'T-101', title: 'Set up project board', priority: 'medium', status: 'todo', assignedTo: 'Alice', dueDate: '2023-12-01' },
+      { id: 'T-102', title: 'Design ticket model', priority: 'high', status: 'todo', assignedTo: 'Bob', dueDate: '2023-12-01' },
+      { id: 'T-103', title: 'Create API stubs', priority: 'low', status: 'todo', assignedTo: 'Charlie', dueDate: '2023-12-01' },
+      { id: 'T-201', title: 'Implement login', priority: 'high', status: 'in_progress', assignedTo: 'Dana', dueDate: '2023-12-01' },
+      { id: 'T-202', title: 'User list pagination', priority: 'medium', status: 'in_progress', assignedTo: 'Alice', dueDate: '2023-12-01' },
+      { id: 'T-301', title: 'Add global styles', priority: 'low', status: 'closed', assignedTo: 'Bob', dueDate: '2023-12-01' },
+      { id: 'T-302', title: 'Fix modal bugs', priority: 'medium', status: 'closed', assignedTo: 'Alice', dueDate: '2023-12-01' },
+      { id: 'T-303', title: 'Refactor API service', priority: 'high', status: 'closed', assignedTo: 'Charlie', dueDate: '2023-12-01' },
     ];
   }
 
@@ -51,7 +51,7 @@ export class ChartComponent implements OnInit {
     const c = this.statusCounts;
     this.seriesTodo = this.genSeries(c.todo);
     this.seriesInProgress = this.genSeries(c.in_progress);
-    this.seriesDone = this.genSeries(c.done);
+    this.seriesClosed = this.genSeries(c.closed);
   }
 
   private genSeries(base: number): number[] {
@@ -69,7 +69,7 @@ export class ChartComponent implements OnInit {
     return Math.max(
       ...this.seriesTodo,
       ...this.seriesInProgress,
-      ...this.seriesDone,
+      ...this.seriesClosed,
       1
     );
   }
@@ -91,13 +91,13 @@ export class ChartComponent implements OnInit {
 
   get vbGroups() {
     const n = this.lineLabels.length;
-    const groups: { idx: number; todo: number; in_progress: number; done: number }[] = [];
+    const groups: { idx: number; todo: number; in_progress: number; closed: number }[] = [];
     for (let i = 0; i < n; i++) {
       groups.push({
         idx: this.lineLabels[i],
         todo: this.seriesTodo[i] || 0,
         in_progress: this.seriesInProgress[i] || 0,
-        done: this.seriesDone[i] || 0,
+        closed: this.seriesClosed[i] || 0,
       });
     }
     return groups;
@@ -116,22 +116,22 @@ export class ChartComponent implements OnInit {
     return {
       todo: items.filter(t => t.status === 'todo').length,
       in_progress: items.filter(t => t.status === 'in_progress').length,
-      done: items.filter(t => t.status === 'done').length,
+      closed: items.filter(t => t.status === 'closed').length,
     };
   }
 
   get maxCount() {
     const c = this.statusCounts;
-    return Math.max(c.todo, c.in_progress, c.done, 1);
+    return Math.max(c.todo, c.in_progress, c.closed, 1);
   }
 
   get pieBackground() {
     const c = this.statusCounts;
-    const total = c.todo + c.in_progress + c.done || 1;
+    const total = c.todo + c.in_progress + c.closed || 1;
     const pTodo = (c.todo / total) * 100;
     const pIn = (c.in_progress / total) * 100;
-    const pDone = (c.done / total) * 100;
-    return `conic-gradient(#b91c1c ${pTodo}%, #0369a1 0 ${pTodo + pIn}%, #047857 0 ${pTodo + pIn + pDone}%)`;
+    const pClosed = (c.closed / total) * 100;
+    return `conic-gradient(#b91c1c ${pTodo}%, #0369a1 0 ${pTodo + pIn}%, #047857 0 ${pTodo + pIn + pClosed}%)`;
   }
 
   get filteredChartTickets() {
@@ -143,32 +143,32 @@ export class ChartComponent implements OnInit {
     return {
       todo: items.filter(t => t.status === 'todo').length,
       in_progress: items.filter(t => t.status === 'in_progress').length,
-      done: items.filter(t => t.status === 'done').length,
+      closed: items.filter(t => t.status === 'closed').length,
     };
   }
 
   get filteredMaxCount() {
     const c = this.filteredChartCounts;
-    return Math.max(c.todo, c.in_progress, c.done, 1);
+    return Math.max(c.todo, c.in_progress, c.closed, 1);
   }
 
   get distPercent() {
     const c = this.statusCounts;
-    const total = c.todo + c.in_progress + c.done || 1;
+    const total = c.todo + c.in_progress + c.closed || 1;
     return {
       todo: (c.todo / total) * 100,
       in_progress: (c.in_progress / total) * 100,
-      done: (c.done / total) * 100,
+      closed: (c.closed / total) * 100,
     };
   }
 
   get filteredDistPercent() {
     const c = this.filteredChartCounts;
-    const total = c.todo + c.in_progress + c.done || 1;
+    const total = c.todo + c.in_progress + c.closed || 1;
     return {
       todo: (c.todo / total) * 100,
       in_progress: (c.in_progress / total) * 100,
-      done: (c.done / total) * 100,
+      closed: (c.closed / total) * 100,
     };
   }
 
@@ -190,15 +190,15 @@ export class ChartComponent implements OnInit {
       const items = this.filteredByStatusTickets.filter(t => t.assignedTo === u);
       const todo = items.filter(t => t.status === 'todo').length;
       const in_progress = items.filter(t => t.status === 'in_progress').length;
-      const done = items.filter(t => t.status === 'done').length;
-      const total = todo + in_progress + done || 1;
+      const closed = items.filter(t => t.status === 'closed').length;
+      const total = todo + in_progress + closed || 1;
       return {
         user: u,
-        counts: { todo, in_progress, done },
+        counts: { todo, in_progress, closed },
         percents: {
           todo: (todo / total) * 100,
           in_progress: (in_progress / total) * 100,
-          done: (done / total) * 100,
+          closed: (closed / total) * 100,
         },
         total
       };
@@ -208,7 +208,7 @@ export class ChartComponent implements OnInit {
   get groupBarMaxCount() {
     let max = 1;
     for (const g of this.groupedStatusByUser) {
-      max = Math.max(max, g.counts.todo, g.counts.in_progress, g.counts.done);
+      max = Math.max(max, g.counts.todo, g.counts.in_progress, g.counts.closed);
     }
     return max;
   }
