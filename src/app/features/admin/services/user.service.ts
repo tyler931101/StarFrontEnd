@@ -21,23 +21,13 @@ export class UserService {
 
     return this.api.get<any>('admin/users', httpParams).pipe(
       map((res: any) => {
-        // Normalize common API shapes into UserListResponse
-        if (res?.data) {
-          const d = res.data;
-          return {
-            users: d.users ?? d.items ?? [],
-            total: d.total ?? d.count ?? 0,
-            page: d.page ?? params.page,
-            pageSize: d.pageSize ?? params.pageSize,
-            totalPages: d.totalPages ?? Math.ceil((d.total ?? d.count ?? 0) / (d.pageSize ?? params.pageSize))
-          } as UserListResponse;
-        }
+        const data = res?.data || res;
         return {
-          users: res.users ?? res.items ?? [],
-          total: res.total ?? res.count ?? 0,
-          page: res.page ?? params.page,
-          pageSize: res.pageSize ?? params.pageSize,
-          totalPages: res.totalPages ?? Math.ceil((res.total ?? res.count ?? 0) / (res.pageSize ?? params.pageSize))
+          users: data.users ?? data.items ?? [],
+          total: data.total ?? data.count ?? 0,
+          page: data.page ?? params.page,
+          pageSize: data.pageSize ?? params.pageSize,
+          totalPages: data.totalPages ?? Math.ceil((data.total ?? data.count ?? 0) / (data.pageSize ?? params.pageSize)),
         } as UserListResponse;
       })
     );

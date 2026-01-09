@@ -1,3 +1,28 @@
 <div class="container">
     <h1>Chat With Users</h1>
+    <div class="main-content">
+        <div class="chat-container">
+            <div class="chat-users-container">
+                <div class="chat-header"><h2>Direct Messages</h2></div>
+                <div class="chat-users" *ngFor="let chatUser of chatUsers;">
+                    <div class="chat-user-item">
+                        <div class="chat-user-avatar">
+                            <img class="avatar" [src]="getAvatar(chatUser.id)" alt="" />
+                        </div>
+                        <div class="chat-user-name">{{chatUser.username}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-history">
+                <div class="chat-messages">
+                    <div class="chat-message">
+                        <div class="chat-message-content">Hello, how are you?</div>
+                    </div>
+                </div>
+
+                <textarea class="chat-input" type="text" placeholder="Type your message here..."></textarea>
+            </div>
+        </div>
+    </div>
 </div>

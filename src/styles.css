@@ -1,6 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
-html, body { height: 100%; }
+html, body { height: 100%; background-color: #fff; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.main-layout {
+    height: 100vh;
+}
 
 .container {
     padding: 30px 50px;
@@ -21,11 +25,53 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 body {
-    background: #f8fafc;
+    background: #fff;
     color: var(--color-gray-700);
 }
 
 .focus-ring:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px var(--ring);
+}
+
+/* Style the entire scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    /* Set the width of the vertical scrollbar */
+    height: 10px;
+    /* Set the height of the horizontal scrollbar */
+}
+
+/* Style the scrollbar track */
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    /* Light grey */
+    border-radius: 10px;
+}
+
+/* Style the scrollbar thumb (draggable part) */
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Dark grey */
+    border-radius: 10px;
+    border: 3px solid #f1f1f1;
+    /* Gives some spacing between thumb and track */
+}
+
+/* Style the thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #004457;
+    /* Darker grey */
+}
+
+/* Optional: Style the arrows at the ends of the scrollbar */
+::-webkit-scrollbar-button {
+    display: none;
+    /* Hide the arrows */
+}
+
+/* Optional: Style the bottom-right corner */
+::-webkit-scrollbar-corner {
+    background-color: #f1f1f1;
+    /* Match the track background */
 }
