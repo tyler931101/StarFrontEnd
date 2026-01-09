@@ -46,9 +46,11 @@ export class PaginationComponent {
   }
   
   onPageChange(page: number) {
-    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-      this.pageChange.emit(page);
+    // Prevent navigation if page is invalid or same as current
+    if (page < 1 || page > this.totalPages || page === this.currentPage) {
+      return;
     }
+    this.pageChange.emit(page);
   }
   
   onPageSizeChange() {

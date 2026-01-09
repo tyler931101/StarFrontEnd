@@ -1,46 +1,74 @@
 <div class="pagination-container" *ngIf="totalItems > 0">
+    <div class="pagination-wrapper">
+        <div class="page-info">
+            <span class="info-text">Showing <div>{{ startItem }}</div> to <div>{{ endItem }}</div> of <div>{{ totalItems }}</div> entries</span>
+        </div>
 
-    <div class="page-info">
-        Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} entries
-    </div>
+        <nav class="pagination-nav" *ngIf="totalPages > 1">
+            <button 
+                class="pagination-btn" 
+                [class.disabled]="currentPage === 1"
+                [disabled]="currentPage === 1"
+                (click)="onPageChange(1)" 
+                aria-label="First page"
+                title="First page">
+                <i class="fas fa-angle-double-left"></i>
+            </button>
+            
+            <button 
+                class="pagination-btn" 
+                [class.disabled]="currentPage === 1"
+                [disabled]="currentPage === 1"
+                (click)="onPageChange(currentPage - 1)" 
+                aria-label="Previous page"
+                title="Previous page">
+                <i class="fas fa-angle-left"></i>
+            </button>
 
-    <nav *ngIf="totalPages > 1">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" [class.disabled]="currentPage === 1">
-                <a class="page-link" (click)="onPageChange(1)" aria-label="First">
-                    <span aria-hidden="true">&laquo;&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPage === 1">
-                <a class="page-link" (click)="onPageChange(currentPage - 1)" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-    
-            <li class="page-item" *ngFor="let page of getPages()" [class.active]="page === currentPage">
-                <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
-            </li>
-    
-            <li class="page-item" [class.disabled]="currentPage === totalPages">
-                <a class="page-link" (click)="onPageChange(currentPage + 1)" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPage === totalPages">
-                <a class="page-link" (click)="onPageChange(totalPages)" aria-label="Last">
-                    <span aria-hidden="true">&raquo;&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    
-    <div class="page-size-selector">
-        <label class="me-2">Show:</label>
-        <select class="form-select form-select-sm d-inline-block w-auto" [(ngModel)]="pageSize"
-            (change)="onPageSizeChange()">
-            <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
-        </select>
-        <span class="ms-2">per page</span>
+            <div class="page-numbers">
+                <button 
+                    *ngFor="let page of getPages()" 
+                    class="page-number" 
+                    [class.active]="page === currentPage"
+                    (click)="onPageChange(page)"
+                    [attr.aria-label]="'Go to page ' + page"
+                    [attr.aria-current]="page === currentPage ? 'page' : null">
+                    {{ page }}
+                </button>
+            </div>
+
+            <button 
+                class="pagination-btn" 
+                [class.disabled]="currentPage === totalPages"
+                [disabled]="currentPage === totalPages"
+                (click)="onPageChange(currentPage + 1)" 
+                aria-label="Next page"
+                title="Next page">
+                <i class="fas fa-angle-right"></i>
+            </button>
+            
+            <button 
+                class="pagination-btn" 
+                [class.disabled]="currentPage === totalPages"
+                [disabled]="currentPage === totalPages"
+                (click)="onPageChange(totalPages)" 
+                aria-label="Last page"
+                title="Last page">
+                <i class="fas fa-angle-double-right"></i>
+            </button>
+        </nav>
+        
+        <div class="page-size-selector">
+            <label for="pageSizeSelect">Show:</label>
+            <select 
+                id="pageSizeSelect"
+                class="page-size-select" 
+                [(ngModel)]="pageSize"
+                (change)="onPageSizeChange()">
+                <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+            <span class="per-page-text">per page</span>
+        </div>
     </div>
 </div>
 

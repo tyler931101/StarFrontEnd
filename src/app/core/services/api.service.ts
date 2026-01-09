@@ -104,7 +104,18 @@ export class ApiService {
         withCredentials: true,
         responseType: 'blob'
       })
-      .pipe(catchError((e) => this.handleError(e)));
+      .pipe(
+        catchError((e: HttpErrorResponse) => {
+          // For avatar requests that legitimately return 404 (no avatar stored),
+          // don't show a toast or log an API error here. Let callers decide
+          // how to handle the "no avatar" case.
+          if (e.status === 404 && endpoint.includes('/avatar')) {
+            return throwError(() => e);
+          }
+
+          return this.handleError(e);
+        })
+      );
   }
 
   post<T>(endpoint: string, body: any, extraHeaders?: Record<string, string>): Observable<T> {

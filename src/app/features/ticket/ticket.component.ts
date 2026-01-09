@@ -6,6 +6,7 @@ import { ComponentsModule } from '../../shared/components/components.module';
 import { User } from '../admin/models/user.model';
 import { TicketService } from './services/ticket.service';
 import { Ticket, TicketStatus } from './models/ticket.model';
+import { AuthService } from '../auth/services/auth.service';
 
 @Component({
   selector: 'app-tickets',
@@ -53,7 +54,8 @@ export class TicketComponent implements OnInit {
   createError: string | null = null;
 
   constructor(
-    private ticketService: TicketService
+    private ticketService: TicketService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -87,6 +89,20 @@ export class TicketComponent implements OnInit {
         this.filteredTesting = [...this.testing];
         this.filteredClosed = [...this.closed];
         this.applyFilter();
+      },
+      error: (err) => {
+        console.error('Error loading tickets:', err);
+        // Initialize empty arrays on error to prevent display issues
+        this.todo = [];
+        this.inProgress = [];
+        this.resolved = [];
+        this.testing = [];
+        this.closed = [];
+        this.filteredTodo = [];
+        this.filteredInProgress = [];
+        this.filteredResolved = [];
+        this.filteredTesting = [];
+        this.filteredClosed = [];
       }
     });
   }
@@ -149,13 +165,27 @@ export class TicketComponent implements OnInit {
     };
   
     if (prevId !== targetId) {
-      const item = event.item.data as { id: string };
+      const item = event.item.data as Ticket;
       const src = getArr(prevId);
       const dst = getArr(targetId);
       const idx = src.findIndex(x => x.id === item.id);
       if (idx > -1) {
-        const [moved] = src.splice(idx, 1);
-        const originalStatus = moved.status;
+        const moved = src[idx];
+        
+        // Check permissions: Admin can move any ticket, others can only move their assigned tickets
+        const currentUserId = this.authService.currentUserId;
+        const userRole = this.authService.role;
+        const isAdmin = userRole === 'Admin' || userRole === 'admin';
+        const isAssignedToUser = moved.assignedTo === currentUserId || 
+                                 moved.assignee?.id === currentUserId;
+        
+        if (!isAdmin && !isAssignedToUser) {
+          alert('You can only move tickets that are assigned to you.');
+          return;
+        }
+        
+        const [removed] = src.splice(idx, 1);
+        const originalStatus = removed.status;
         
         let newStatus: TicketStatus = 'todo';
         if (targetId === 'todoList') newStatus = 'todo';
@@ -164,15 +194,15 @@ export class TicketComponent implements OnInit {
         else if (targetId === 'testingList') newStatus = 'testing';
         else if (targetId === 'closedList') newStatus = 'closed';
   
-        moved.status = newStatus;
-        dst.splice(event.currentIndex, 0, moved);
-        this.ticketService.moveTicket(moved.id, newStatus).subscribe({
+        removed.status = newStatus;
+        dst.splice(event.currentIndex, 0, removed);
+        this.ticketService.moveTicket(removed.id, newStatus).subscribe({
           next: () => {},
           error: () => {
-            const dstIdx = dst.findIndex(x => x.id === moved.id);
+            const dstIdx = dst.findIndex(x => x.id === removed.id);
             if (dstIdx > -1) dst.splice(dstIdx, 1);
-            moved.status = originalStatus;
-            src.splice(idx, 0, moved);
+            removed.status = originalStatus;
+            src.splice(idx, 0, removed);
             this.applyFilter();
           }
         });

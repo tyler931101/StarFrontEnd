@@ -259,47 +259,6 @@ export class AuthService {
     );
   }
 
-  // Upload avatar via /api/user/upload-avatar (POST with FormData)
-  uploadAvatar(file: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('ImageFile', file, file.name);
-    
-    return this.api.post('user/upload-avatar', formData).pipe(
-      tap((response: any) => {
-        if (response.success && response.data) {
-          // Update user state with new avatar URL
-          const currentUser = this.userState.getUser();
-          if (currentUser && response.data.avatarUrl) {
-            this.userState.setUser({
-              ...currentUser,
-              avatarUrl: response.data.avatarUrl
-            });
-          }
-        }
-      })
-    );
-  }
-
-  // Update avatar via /api/user/avatar (PUT with FormData) - alternative
-  updateAvatar(file: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('file', file, file.name);
-    
-    return this.api.put('user/avatar', formData).pipe(
-      tap((response: any) => {
-        if (response.success && response.data) {
-          const currentUser = this.userState.getUser();
-          if (currentUser && response.data.avatarUrl) {
-            this.userState.setUser({
-              ...currentUser,
-              avatarUrl: response.data.avatarUrl
-            });
-          }
-        }
-      })
-    );
-  }
-
   // Delete avatar via /api/user/avatar (DELETE)
   deleteAvatar(): Observable<any> {
     return this.api.delete('user/avatar').pipe(

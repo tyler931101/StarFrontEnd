@@ -58,7 +58,9 @@
                             <tr *ngFor="let user of users; let i = index">
                                 <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
                                 <td>
-                                    <img src="" alt="" />
+                                    <div class="user-avatar-container">
+                                        <img class="user-avatar" [src]="getAvatar(user.id)" alt="" />
+                                    </div>
                                 </td>
                                 <td>{{ user.username }}</td>
                                 <td>{{ user.email }}</td>
@@ -76,12 +78,8 @@
                                 <td>{{ user.createdAt | date:'shortDate' }}</td>
                                 <td>
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <button class="btn btn-outline-primary" (click)="openEditModal(user)">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger" (click)="openDeleteModal(user)">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                        <i class="edit-user fas fa-pencil" (click)="openEditModal(user)"></i>
+                                        <i class="delete-user fas fa-trash" (click)="openDeleteModal(user)"></i>
                                     </div>
                                 </td>
                             </tr>
@@ -129,7 +127,8 @@
                     <label>Phone</label>
                     <input type="tel" class="form-control" formControlName="phone">
                     <div *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched" class="error-message">
-                        Phone number is required
+                        <small *ngIf="userForm.get('phone')?.errors?.['required']">Phone number is required</small>
+                        <small *ngIf="userForm.get('phone')?.errors?.['pattern']">Please enter a valid phone number (e.g. +1234567890)</small>
                     </div>
                 </div>
         

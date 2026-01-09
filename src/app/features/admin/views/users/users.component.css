@@ -126,15 +126,28 @@
 }
 
 .table td {
-    vertical-align: middle;
     border-top: 1px solid #f3f4f6;
     text-align: center;
     font-size: 0.9rem;
-    height: 100px;
+    height: 80px;
 }
 
 .table-hover tbody tr:hover {
     background: #f9fafb;
+}
+
+
+.user-avatar-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-avatar {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .badge {
@@ -143,8 +156,23 @@
     padding: 0.35em 0.65em;
 }
 
-.btn-group-sm>.btn {
-    padding: 0.25rem 0.5rem;
+.edit-user {
+    margin-right: 10px;
+    color: #ef4444;
+    cursor: pointer;
+}
+
+.edit-user:hover {
+    color: #b91c1c;
+}
+
+.delete-user {
+    color: #0078d7;
+    cursor: pointer;
+}
+
+.delete-user:hover {
+    color: #005fa3;
 }
 
 .filter-section {

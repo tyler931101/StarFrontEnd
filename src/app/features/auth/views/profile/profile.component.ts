@@ -6,6 +6,8 @@ import { UserProfileDto, UpdateProfileDto, ChangePasswordDto } from '../../model
 import { UserStateService } from 'app/core/services/user-state.service';
 import { Subject, takeUntil } from 'rxjs';
 
+import { AvatarService } from 'app/core/services/avatar.service';
+
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -57,14 +59,22 @@ export class ProfileComponent implements OnInit {
   accountCreated: string = '';
   isVerified: boolean = false;
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private authService: AuthService,
     private userState: UserStateService,
+    private avatarService: AvatarService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadProfile();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadProfile(): void {
@@ -85,9 +95,7 @@ export class ProfileComponent implements OnInit {
           
           this.userId = user.id;
 
-          this.loadAvatarFromBackend();
           // Update UI state
-          this.profileImage = user.avatarUrl || 'assets/default-avatar.png';
           this.userEmail = user.email || '';
           this.userRole = user.role || '';
           this.accountCreated = user.createdAt || '';
@@ -95,6 +103,10 @@ export class ProfileComponent implements OnInit {
           
           // Update user state
           this.userState.setUser(user);
+
+          // Always load avatar through AvatarService to get proper blob URL
+          // This ensures consistent avatar handling and proper caching
+          this.loadAvatarFromBackend();
         }
       },
       error: (error: any) => {
@@ -108,61 +120,21 @@ export class ProfileComponent implements OnInit {
     if (!this.userId) return;
 
     this.isLoadingAvatar = true;
-    this.profileImage = 'assets/default-avatar.png'; // Show default while loading
-    this.cdr.detectChanges();
-    
-    // Add timestamp to prevent caching issues
-    const timestamp = new Date().getTime();
-    this.authService.getUserAvatar(this.userId, timestamp).subscribe({
-      next: (blob: Blob) => {
-        this.createImageFromBlob(blob);
+    this.avatarService.getAvatar(this.userId).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (url) => {
+        this.profileImage = url;
         this.isLoadingAvatar = false;
-          this.cdr.detectChanges();
+        this.cdr.detectChanges();
       },
-      error: (error: any) => {
+      error: () => {
+        // Fallback to default avatar on any error
         this.profileImage = 'assets/default-avatar.png';
         this.isLoadingAvatar = false;
         this.cdr.detectChanges();
       }
     });
-  }
-
-  // Convert Blob to image URL
-  async createImageFromBlob(blob: Blob): Promise<void> {
-    try {
-      // Check if blob is valid
-      if (!blob || blob.size === 0) {
-        throw new Error('Empty blob received');
-      }
-
-      // Create object URL for better performance (instead of data URL)
-      const objectUrl = URL.createObjectURL(blob);
-      
-      // Preload image to ensure it's valid
-      const img = new Image();
-      img.onload = () => {
-        // Clean up previous object URL if exists
-        if (this.profileImage.startsWith('blob:')) {
-          URL.revokeObjectURL(this.profileImage);
-        }
-        
-        this.profileImage = objectUrl;
-        this.cdr.detectChanges();
-      };
-      
-      img.onerror = () => {
-        URL.revokeObjectURL(objectUrl);
-        this.profileImage = 'assets/default-avatar.png';
-        this.cdr.detectChanges();
-      };
-      
-      img.src = objectUrl;
-      
-    } catch (error) {
-      console.error('Error processing image blob:', error);
-      this.profileImage = 'assets/default-avatar.png';
-      this.cdr.detectChanges();
-    }
   }
 
   triggerFileInput() {
@@ -257,12 +229,7 @@ export class ProfileComponent implements OnInit {
         if (response.success && response.data) {
           // If an avatar was uploaded or backend returned an avatar URL, reload the avatar
           if (this.selectedFile || response.data.avatarUrl) {
-            // Revoke any previous blob URL to avoid memory leaks
-            if (this.profileImage && this.profileImage.startsWith('blob:')) {
-              URL.revokeObjectURL(this.profileImage);
-            }
-            // Force reload from backend which will fetch the latest image and handle cache-busting
-            this.loadAvatarFromBackend();
+            this.avatarService.loadAvatar(this.userId).subscribe();
           }
 
           // Update user info
@@ -345,8 +312,7 @@ export class ProfileComponent implements OnInit {
             // Update user state
             this.userState.updateUser({ avatarUrl: '' });
 
-            // Force reload from backend which will fetch the latest image and handle cache-busting
-            this.loadAvatarFromBackend();
+            this.avatarService.loadAvatar(this.userId).subscribe();
           }
           this.isUploading = false;
         },
@@ -414,8 +380,7 @@ export class ProfileComponent implements OnInit {
     };
     
     this.selectedFile = undefined;
-    // this.profileImage = this.originalProfile.avatarUrl || 'assets/default-avatar.png';
-    this.profileImage = 'assets/default-avatar.png';
+    this.loadAvatarFromBackend();
     this.imageError = '';
     this.errorMessage = '';
     
