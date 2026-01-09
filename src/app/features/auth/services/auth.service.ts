@@ -214,12 +214,18 @@ export class AuthService {
     const endpoint = `user/${userId}/avatar${timestamp ? `?t=${timestamp}` : ''}`;
 
     return (this.api.getBlob(endpoint as any) as unknown as Observable<Blob>).pipe(
-      // return (this.api.getBlob(endpoint, { responseType: 'blob' } as any) as unknown as Observable<Blob>).pipe(
-       catchError((error) => {
-         console.error('Failed to get avatar:', error);
-         return throwError(() => error);
-       })
-     );
+      // If avatar does not exist in backend (404), just return an empty Blob so
+      // callers can fall back to a default avatar without logging console errors.
+      catchError((error) => {
+        if (error?.status === 404) {
+          // No avatar for this user – treat as "no content" instead of an error
+          return of(new Blob());
+        }
+
+        console.error('Failed to get avatar:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
    updateProfileWithAvatar(formData: FormData): Observable<any> {
