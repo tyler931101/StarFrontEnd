@@ -1,27 +1,87 @@
 <div class="container">
     <h1>Chat With Users</h1>
     <div class="main-content">
+        <!-- <div class="connection-status" [class.connected]="connectionStatus === 'Connected'"
+            [class.failed]="connectionStatus === 'Failed'">
+            Connection: {{connectionStatus}}
+        </div> -->
         <div class="chat-container">
             <div class="chat-users-container">
-                <div class="chat-header"><h2>Direct Messages</h2></div>
-                <div class="chat-users" *ngFor="let chatUser of chatUsers;">
-                    <div class="chat-user-item">
-                        <div class="chat-user-avatar">
-                            <img class="avatar" [src]="getAvatar(chatUser.id)" alt="" />
+                <div class="chat-header">
+                    <h2>Direct Messages</h2>
+                </div>
+                <!-- Scrollable user list -->
+                <div class="chat-users-scrollable">
+                    <div class="chat-user-list" *ngFor="let chatUser of chatUsers">
+                        <div class="chat-user-item" (click)="selectChatUser(chatUser)"
+                            [class.selected]="isUserSelected(chatUser)">
+                            <div class="chat-user-avatar">
+                                <img class="avatar" [src]="getAvatar(chatUser.id)" [alt]="chatUser.username" />
+                            </div>
+                            <div class="chat-user-details">
+                                <div class="chat-user-name">{{chatUser.username}}</div>
+                                <!-- <div class="user-status" [class.online]="chatUser.isOnline">
+                                    {{chatUser.isOnline ? 'Online' : 'Offline'}}
+                                </div> -->
+                            </div>
                         </div>
-                        <div class="chat-user-name">{{chatUser.username}}</div>
+                    </div>
+
+                    <!-- Loading/Empty states -->
+                    <div *ngIf="isLoading" class="loading-state">
+                        Loading users...
+                    </div>
+
+                    <div *ngIf="!isLoading && chatUsers.length === 0" class="empty-state">
+                        No users available
                     </div>
                 </div>
             </div>
 
-            <div class="chat-history">
-                <div class="chat-messages">
-                    <div class="chat-message">
-                        <div class="chat-message-content">Hello, how are you?</div>
+            <div class="chat-history" *ngIf="selectedChatUser">
+                <div class="chat-header">
+                    <h3>{{selectedChatUser.username}}</h3>
+                </div>
+
+                <div class="chat-messages" [class.loading]="isLoadingMessages">
+                    <!-- Loading state -->
+                    <div *ngIf="isLoadingMessages" class="loading-messages">
+                        Loading messages...
+                    </div>
+
+                    <!-- Empty state -->
+                    <div *ngIf="!isLoadingMessages && messages.length === 0" class="empty-messages">
+                        No messages yet. Start the conversation!
+                    </div>
+
+                    <!-- Messages -->
+                    <div *ngIf="!isLoadingMessages && messages.length > 0" class="message-list">
+                        <div *ngFor="let message of messages" class="chat-message"
+                            [class.current-user]="isMessageFromCurrentUser(message)"
+                            [class.other-user]="!isMessageFromCurrentUser(message)">
+                            <div class="message-content">
+                                <div class="message-text">{{message.content}}</div>
+                                <div class="message-time">{{formatMessageTime(message.createdAt)}}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <textarea class="chat-input" type="text" placeholder="Type your message here..."></textarea>
+                <div class="chat-input-container">
+                    <textarea class="chat-input" [(ngModel)]="newMessage" (keydown)="onKeyPress($event)"
+                        placeholder="Type your message here..." rows="1"></textarea>
+                    <button class="send-button" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+                        Send
+                    </button>
+                </div>
+            </div>
+
+            <!-- No user selected state -->
+            <div *ngIf="!selectedChatUser" class="no-user-selected">
+                <div class="no-user-content">
+                    <h3>Select a user to start chatting</h3>
+                    <p>Choose from the available users on the left to begin your conversation.</p>
+                </div>
             </div>
         </div>
     </div>
