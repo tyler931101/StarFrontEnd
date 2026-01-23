@@ -32,6 +32,12 @@ export const userRoutes: Routes = [
         loadComponent: () => import('../../features/helper/helper.component').then(m => m.HelperComponent),
         canActivate: [AuthGuard],
         data: { title: 'Helper' }
+    },
+    {
+        path: 'videos',
+        loadComponent: () => import('../../features/videos/videos.component').then(m => m.VideosComponent),
+        canActivate: [AuthGuard],
+        data: { title: 'Videos' }
     }
 ];
 

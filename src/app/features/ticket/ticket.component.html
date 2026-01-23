@@ -39,7 +39,8 @@
                             <p class="card-description">{{ t.description || 'No description' }}</p>
                         </div>
                         <div class="card-footer">
-                            <span class="assignee">{{ t.assignee?.username || '' }}</span>
+                            <span class="due-date"><i class="fas fa-calendar-alt"></i><p>{{ t.dueDate.slice(0, 10) }}</p></span>
+                            <span class="assignee"><i class="fas fa-user"></i><p>{{ t.assignee?.username || '' }}</p></span>
                             <span class="ms-auto">
                                 <i class="edit-ticket fas fa-pencil" (click)="openEdit(t)"></i>
                                 <i class="delete-ticket fas fa-trash" (click)="openDelete(t)"></i>
@@ -64,7 +65,12 @@
                             <p class="card-description">{{ t.description || 'No description' }}</p>
                         </div>
                         <div class="card-footer">
-                            <span class="assignee">{{ t.assignee?.username || '' }}</span>
+                            <span class="due-date"><i class="fas fa-calendar-alt"></i>
+                                <p>{{ t.dueDate.slice(0, 10) }}</p>
+                            </span>
+                            <span class="assignee"><i class="fas fa-user"></i>
+                                <p>{{ t.assignee?.username || '' }}</p>
+                            </span>
                             <span class="ms-auto">
                                 <i class="edit-ticket fas fa-pencil" (click)="openEdit(t)"></i>
                                 <i class="delete-ticket fas fa-trash" (click)="openDelete(t)"></i>
@@ -89,7 +95,12 @@
                             <p class="card-description">{{ t.description || 'No description' }}</p>
                         </div>
                         <div class="card-footer">
-                            <span class="assignee">{{ t.assignee?.username || '' }}</span>
+                            <span class="due-date"><i class="fas fa-calendar-alt"></i>
+                                <p>{{ t.dueDate.slice(0, 10) }}</p>
+                            </span>
+                            <span class="assignee"><i class="fas fa-user"></i>
+                                <p>{{ t.assignee?.username || '' }}</p>
+                            </span>
                             <span class="ms-auto">
                                 <i class="edit-ticket fas fa-pencil" (click)="openEdit(t)"></i>
                                 <i class="delete-ticket fas fa-trash" (click)="openDelete(t)"></i>
@@ -114,7 +125,12 @@
                             <p class="card-description">{{ t.description || 'No description' }}</p>
                         </div>
                         <div class="card-footer">
-                            <span class="assignee">{{ t.assignee?.username || '' }}</span>
+                            <span class="due-date"><i class="fas fa-calendar-alt"></i>
+                                <p>{{ t.dueDate.slice(0, 10) }}</p>
+                            </span>
+                            <span class="assignee"><i class="fas fa-user"></i>
+                                <p>{{ t.assignee?.username || '' }}</p>
+                            </span>
                             <span class="ms-auto">
                                 <i class="edit-ticket fas fa-pencil" (click)="openEdit(t)"></i>
                                 <i class="delete-ticket fas fa-trash" (click)="openDelete(t)"></i>
@@ -139,7 +155,12 @@
                             <p class="card-description">{{ t.description || 'No description' }}</p>
                         </div>
                         <div class="card-footer">
-                            <span class="assignee">{{ t.assignee?.username || '' }}</span>
+                            <span class="due-date"><i class="fas fa-calendar-alt"></i>
+                                <p>{{ t.dueDate.slice(0, 10) }}</p>
+                            </span>
+                            <span class="assignee"><i class="fas fa-user"></i>
+                                <p>{{ t.assignee?.username || '' }}</p>
+                            </span>
                             <span class="ms-auto">
                                 <i class="edit-ticket fas fa-pencil" (click)="openEdit(t)"></i>
                                 <i class="delete-ticket fas fa-trash" (click)="openDelete(t)"></i>

@@ -109,7 +109,8 @@ export class LandingComponent implements OnInit {
       'user': 'fas fa-user',
       'calendar': 'fas fa-calendar-alt',
       'customer': 'fas fa-address-card',
-      'helper': 'fas fa-hands-helping'
+      'helper': 'fas fa-hands-helping',
+      'videos': 'fas fa-video',
     };
 
     const routeKey = Object.keys(iconMap).find(key => 
