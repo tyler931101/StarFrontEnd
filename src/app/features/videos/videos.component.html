@@ -1,0 +1,73 @@
+<div class="container">
+    <h1>Call Videos</h1>
+    <div class="main-content">
+        <div class="toolbar">
+            <div class="filters">
+            </div>
+
+            <div><button class="btn-submit" (click)="openCreateModal()"> <i class="fas fa-plus"></i>Add New
+                    Video</button>
+            </div>
+        </div>
+
+        <div class="board">
+        </div>
+
+        <app-modal [title]="'New Call Video'" [size]="'md'" [confirmText]="'Create'" [cancelText]="'Cancel'"
+            [isVisible]="isCreateNewVideoModalVisible" (confirm)="saveNewVideo()" (closeModal)="closeNewVideoModal()">
+            <div class="form-group">
+                <label>Video</label>
+                <!-- Video Section -->
+                <div class="video-upload-section">
+                    <div class="video-preview" [class.has-error]="videoError" (click)="triggerFileInput()">
+                        <video [src]="callVideo" class="profile-image" controls></video>
+                        <div *ngIf="isUploading" class="video-loading">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                    </div>
+
+                    <input #fileInput type="file" accept="image/*" (change)="onFileChange($event)" hidden />
+
+                    <div *ngIf="videoError" class="error-message">
+                        {{ videoError }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <!-- <textarea class="form-control" rows="3" [(ngModel)]="editDescription"></textarea>
+                <div class="error-message" *ngIf="createAttempted && !editDescription">
+                    <small>Description is required.</small>
+                </div> -->
+            </div>
+            <div class="form-group">
+                <label>Priority</label>
+                <!-- <select [(ngModel)]="editPriority">
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                    <option value="urgent">Urgent</option>
+                </select>
+                <div class="error-message" *ngIf="createAttempted && !editPriority">
+                    <small>Priority is required.</small>
+                </div> -->
+            </div>
+            <div class="form-group">
+                <label>Assignee</label>
+                <!-- <select [(ngModel)]="editAssignedTo">
+                    <option *ngFor="let u of assignees" [value]="u.id">{{ u.username }}</option>
+                </select>
+                <div class="error-message" *ngIf="createAttempted && !editAssignedTo">
+                    <small>Assignee is required.</small>
+                </div> -->
+            </div>
+            <div class="form-group">
+                <label>Due Date</label>
+                <!-- <input type="date" [(ngModel)]="editDueDate" />
+                <div class="error-message" *ngIf="createAttempted && !editDueDate">
+                    <small>Due Date is required.</small>
+                </div> -->
+            </div>
+        </app-modal>
+    </div>
+</div>

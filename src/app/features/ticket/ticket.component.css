@@ -114,6 +114,22 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.due-date {
+    color: #6b7280;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.assignee {
+    color: #6b7280;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
  
 .badge {
     background: var(--surface-muted, #f3f4f6);

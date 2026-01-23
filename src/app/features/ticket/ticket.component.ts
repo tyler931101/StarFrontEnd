@@ -128,7 +128,7 @@ export class TicketComponent implements OnInit {
     const dto = { 
       title: this.editTitle,
       description: this.editDescription,
-      priority: this.editPriority, 
+      priority: this.editPriority,
       assignedTo: this.editAssignedTo ?? undefined,
       dueDate: this.editDueDate as string
     };
@@ -148,7 +148,6 @@ export class TicketComponent implements OnInit {
         this.createAttempted = true;
       }
     });
-
   }
 
   drop(event: CdkDragDrop<Ticket[]>) {
