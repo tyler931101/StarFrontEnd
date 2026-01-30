@@ -35,6 +35,38 @@ export class CalendarComponent {
   formEnd = '';
   formDescription = '';
 
+  get formStartDateTime(): string {
+    if (!this.formDate) return '';
+    return `${this.formDate}T${this.formStart || '09:00'}`;
+  }
+
+  set formStartDateTime(val: string) {
+    if (!val) return;
+    const parts = val.split('T');
+    if (parts.length >= 2) {
+      this.formDate = parts[0];
+      this.formStart = parts[1];
+    } else {
+        this.formDate = parts[0];
+    }
+  }
+
+  get formEndDateTime(): string {
+    if (!this.formEndDate) return '';
+    return `${this.formEndDate}T${this.formEnd || '10:00'}`;
+  }
+
+  set formEndDateTime(val: string) {
+    if (!val) return;
+    const parts = val.split('T');
+    if (parts.length >= 2) {
+      this.formEndDate = parts[0];
+      this.formEnd = parts[1];
+    } else {
+        this.formEndDate = parts[0];
+    }
+  }
+
   constructor() {
     this.buildCalendar();
   }
