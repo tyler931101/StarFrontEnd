@@ -35,32 +35,22 @@
         </div>
     </div>
 
-    <app-modal [title]="editingEvent ? 'Edit Event' : 'Create Event'" [size]="'sm'" [confirmText]="editingEvent ? 'Save' : 'Create'" [cancelText]="'Cancel'" [isVisible]="isEventModalVisible" (confirm)="saveEvent()" (closeModal)="closeEventModal()">
-        <div class="mb-2">
+    <app-modal [title]="editingEvent ? 'Edit Event' : 'Create Event'" [size]="'md'" [confirmText]="editingEvent ? 'Save' : 'Create'" [cancelText]="'Cancel'" [isVisible]="isEventModalVisible" (confirm)="saveEvent()" (closeModal)="closeEventModal()">
+        <div class="form-group">
             <label class="form-label">Title</label>
             <input type="text" class="form-control" [(ngModel)]="formTitle">
         </div>
-        <div class="row mb-2">
-            <div class="col">
-                <label class="form-label">Start Date</label>
-                <input type="date" class="form-control" [(ngModel)]="formDate">
+        <div class="date-section">
+            <div class="form-group">
+                    <label class="form-label">Start</label>
+                    <input type="datetime-local" class="form-control" [(ngModel)]="formStartDateTime">
             </div>
-            <div class="col">
-                <label class="form-label">End Date</label>
-                <input type="date" class="form-control" [(ngModel)]="formEndDate">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <label class="form-label">Start</label>
-                <input type="time" class="form-control" [(ngModel)]="formStart">
-            </div>
-            <div class="col">
+            <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label">End</label>
-                <input type="time" class="form-control" [(ngModel)]="formEnd">
+                <input type="datetime-local" class="form-control" [(ngModel)]="formEndDateTime">
             </div>
         </div>
-        <div class="mb-2">
+        <div class="form-group">
             <label class="form-label">Description</label>
             <textarea rows="3" class="form-control" [(ngModel)]="formDescription"></textarea>
         </div>
