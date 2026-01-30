@@ -38,21 +38,34 @@
     <app-modal [title]="editingEvent ? 'Edit Event' : 'Create Event'" [size]="'md'" [confirmText]="editingEvent ? 'Save' : 'Create'" [cancelText]="'Cancel'" [isVisible]="isEventModalVisible" (confirm)="saveEvent()" (closeModal)="closeEventModal()">
         <div class="form-group">
             <label class="form-label">Title</label>
-            <input type="text" class="form-control" [(ngModel)]="formTitle">
+            <input type="text" class="form-control" [(ngModel)]="formTitle" [class.invalid]="formAttempted && !formTitle.trim()">
+            <div class="error-message" *ngIf="formAttempted && !formTitle.trim()">
+                <small>Title is required.</small>
+            </div>
         </div>
-        <div class="date-section">
+        <fieldset class="date-section">
+            <legend>Select Date, Time</legend>
             <div class="form-group">
                     <label class="form-label">Start</label>
-                    <input type="datetime-local" class="form-control" [(ngModel)]="formStartDateTime">
+                    <input type="datetime-local" class="form-control" [(ngModel)]="formStartDateTime" [class.invalid]="formAttempted && !formDate">
+                    <div class="error-message" *ngIf="formAttempted && !formDate">
+                        <small>Start date is required.</small>
+                    </div>
             </div>
             <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label">End</label>
-                <input type="datetime-local" class="form-control" [(ngModel)]="formEndDateTime">
+                <input type="datetime-local" class="form-control" [(ngModel)]="formEndDateTime" [class.invalid]="formAttempted && !formEndDate">
+                <div class="error-message" *ngIf="formAttempted && !formEndDate">
+                    <small>End date is required.</small>
+                </div>
             </div>
-        </div>
+        </fieldset>
         <div class="form-group">
             <label class="form-label">Description</label>
-            <textarea rows="3" class="form-control" [(ngModel)]="formDescription"></textarea>
+            <textarea rows="3" class="form-control" [(ngModel)]="formDescription" [class.invalid]="formAttempted && !formDescription.trim()"></textarea>
+            <div class="error-message" *ngIf="formAttempted && !formDescription.trim()">
+                <small>Description is required.</small>
+            </div>
         </div>
         <div class="mt-2" *ngIf="editingEvent">
             <button class="btn btn-outline-danger" (click)="openDelete(editingEvent)">Delete</button>
