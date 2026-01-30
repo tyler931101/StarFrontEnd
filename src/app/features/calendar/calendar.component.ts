@@ -34,6 +34,7 @@ export class CalendarComponent {
   formStart = '';
   formEnd = '';
   formDescription = '';
+  formAttempted = false;
 
   get formStartDateTime(): string {
     if (!this.formDate) return '';
@@ -143,6 +144,7 @@ export class CalendarComponent {
   openCreate(date: Date) {
     this.selectedDate = date;
     this.editingEvent = null;
+    this.formAttempted = false;
     this.formTitle = '';
     this.formDate = this.dateKey(date);
     this.formEndDate = this.formDate;
@@ -154,6 +156,7 @@ export class CalendarComponent {
 
   openEdit(event: CalendarEvent) {
     this.editingEvent = event;
+    this.formAttempted = false;
     this.formTitle = event.title;
     this.formDate = event.date;
     this.formEndDate = event.endDate ?? event.date;
@@ -171,6 +174,7 @@ export class CalendarComponent {
   openCreateFromToolbar() {
     this.selectedDate = null;
     this.editingEvent = null;
+    this.formAttempted = false;
     this.formTitle = '';
     const todayKey = this.dateKey(new Date());
     this.formDate = todayKey;
@@ -182,8 +186,13 @@ export class CalendarComponent {
   }
 
   saveEvent() {
+    this.formAttempted = true;
     const title = this.formTitle.trim();
-    if (!title) { this.closeEventModal(); return; }
+    
+    if (!title || !this.formDate || !this.formEndDate || !this.formDescription.trim()) {
+      return;
+    }
+
     if (this.editingEvent) {
       this.editingEvent.title = title;
       this.editingEvent.date = this.formDate;

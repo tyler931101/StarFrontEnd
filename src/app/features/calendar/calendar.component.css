@@ -105,10 +105,39 @@
   transition: all 0.2s ease;
 }
 
+.form-group textarea.invalid {
+  border-color: #e63946;
+  background: #fff5f5;
+}
+
 .date-section {
   border: 1px solid #e5e7eb;
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 16px;
   background-color: #f9fafb;
+}
+
+.date-section legend {
+  padding: 0 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #374151;
+  width: auto;
+  float: none;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  background: #fef2f2;
+  border-radius: 4px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
