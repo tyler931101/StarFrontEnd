@@ -3,18 +3,22 @@
 
     <div class="main-content">
         <div class="cal-toolbar">
-            <button class="btn" (click)="prevMonth()">Prev</button>
-            <div class="month-label">{{ monthLabel }}</div>
-            <button class="btn" (click)="nextMonth()">Next</button>
+            <button class="btn" (click)="prev()">Prev</button>
+            <div class="month-label">{{ currentLabel }}</div>
+            <button class="btn" (click)="next()">Next</button>
             <button class="btn" (click)="goToday()">Today</button>
+            <select class="form-select view-select" [(ngModel)]="viewMode" (change)="onViewModeChange()">
+                <option *ngFor="let mode of viewOptions" [value]="mode.toLowerCase()">{{ mode }}</option>
+            </select>
             <button class="btn btn-primary" (click)="openCreateFromToolbar()">Schedule Event</button>
         </div>
 
-        <div class="calendar">
+        <!-- Month View -->
+        <div class="calendar month-view" *ngIf="viewMode === 'month'">
             <div class="cal-head">
                 <div class="cal-cell" *ngFor="let d of daysOfWeek">{{ d }}</div>
             </div>
-            <div class="cal-body" [style.gridTemplateRows]="'repeat(' + weeks.length + ', minmax(110px, auto))'">
+            <div class="cal-body" [style.gridTemplateRows]="'repeat(' + weeks.length + ', minmax(135px, auto))'">
                 <div class="cal-row" *ngFor="let w of weeks">
                     <div class="cal-cell cal-day" [class.out-month]="!d.inMonth" [class.today]="isToday(d.date)"
                         *ngFor="let d of w">
@@ -23,11 +27,86 @@
                         </div>
                         <div class="events">
                             <div class="event" *ngFor="let e of d.events" (click)="openEdit(e)"
-                                [class.period]="e.endDate && e.endDate !== e.date" [style.background]="e.color">
+                                [class.period]="e.endDate && e.endDate !== e.date" [style.background]="e.color"
+                                (click)="$event.stopPropagation(); openEdit(e)">
                                 <div class="event-title">{{ e.title }}</div>
                                 <div class="event-time" *ngIf="e.start || e.end">{{ e.start || '' }}{{ e.end ? ' - ' + e.end :
                                     '' }}</div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Grid View (Day / Week) -->
+        <div class="time-grid-container" *ngIf="viewMode === 'day' || viewMode === 'week'">
+            <div class="time-grid-header">
+                <div class="time-gutter-head"></div>
+                <div class="header-days" [style.gridTemplateColumns]="'repeat(' + weeks[0].length + ', 1fr)'">
+                    <div class="header-day-cell" *ngFor="let d of weeks[0]" [class.today]="isToday(d.date)">
+                        <div class="header-day-name">{{ d.date | date:'EEE' }}</div>
+                        <div class="header-day-num" [class.today-num]="isToday(d.date)" (click)="viewMode = 'day'; currentDate = d.date; onViewModeChange()">
+                            {{ d.date.getDate() }}
+                        </div>
+                    </div>
+                </div>
+                <div class="scroll-gutter"></div>
+            </div>
+            
+            <div class="time-grid-body">
+                <!-- Time Labels -->
+                <div class="time-labels">
+                    <div class="time-label" *ngFor="let t of timeSlots">
+                        <span>{{ t }}</span>
+                    </div>
+                </div>
+
+                <!-- Grid Content -->
+                <div class="grid-content">
+                    <!-- Background Lines -->
+                    <div class="grid-lines">
+                        <div class="grid-line" *ngFor="let t of timeSlots"></div>
+                    </div>
+
+                    <!-- Day Columns -->
+                    <div class="day-columns" [style.gridTemplateColumns]="'repeat(' + weeks[0].length + ', 1fr)'">
+                        <div class="day-column" *ngFor="let d of weeks[0]" [class.today-col]="isToday(d.date)">
+                            <!-- Click on empty space to create -->
+                            <div class="click-layer" (click)="openCreate(d.date)"></div>
+                            
+                            <!-- Events -->
+                            <ng-container *ngFor="let e of d.events">
+                                <div class="time-event" *ngIf="e.start"
+                                    [ngStyle]="getEventStyle(e)"
+                                    [style.background-color]="e.color"
+                                    (click)="$event.stopPropagation(); openEdit(e)">
+                                    <div class="time-event-title">{{ e.title }}</div>
+                                    <div class="time-event-time">{{ e.start }} - {{ e.end }}</div>
+                                </div>
+                                <!-- All day events could go to header, but for now just list them at top or ignore if logic not ready -->
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Year View -->
+        <div class="year-view" *ngIf="viewMode === 'year'">
+            <div class="mini-month" *ngFor="let m of yearMonths">
+                <div class="mini-month-title">{{ m.name }}</div>
+                <div class="mini-cal-head">
+                    <div class="mini-cal-cell-head" *ngFor="let d of daysOfWeek">{{ d | slice:0:1 }}</div>
+                </div>
+                <div class="mini-cal-body">
+                    <div class="mini-cal-row" *ngFor="let w of m.weeks">
+                        <div class="mini-cal-cell" *ngFor="let d of w" 
+                             [class.out-month]="!d.inMonth" 
+                             [class.has-event]="d.events.length > 0"
+                             [class.today]="isToday(d.date)"
+                             (click)="openCreate(d.date)">
+                            {{ d.date.getDate() }}
                         </div>
                     </div>
                 </div>

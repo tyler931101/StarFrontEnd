@@ -8,17 +8,22 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
-.cal-toolbar { display: flex; align-items: center; gap: 8px; margin: 12px 0; }
-.month-label { font-weight: 600; flex: 1; text-align: center; }
+.cal-toolbar { display: flex; align-items: center; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+.month-label { font-weight: 600; flex: 1; text-align: center; min-width: 150px; }
+.view-select { padding: 6px 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; cursor: pointer; outline: none; }
+.view-select:focus { border-color: var(--color-primary, #0078d7); }
 .btn { padding: 6px 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; cursor: pointer; }
 .btn-primary { background: var(--color-primary, #0078d7); color: #fff; border-color: var(--color-primary, #0078d7); }
 .btn:hover { filter: brightness(0.98); }
 .btn-primary:hover { filter: brightness(0.95); }
-.calendar { border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; width: 100%; display: grid; grid-template-rows: 40px auto; overflow: hidden; }
+.calendar { border: 1px solid #e5e7eb; background: #fff; width: 100%; display: grid; grid-template-rows: 40px auto; overflow: hidden; }
 .cal-head { display: grid; grid-template-columns: repeat(7, 1fr); background: #f3f4f6; height: 40px; }
 .cal-head .cal-cell { display: flex; align-items: center; justify-content: center; font-weight: 600; }
 .cal-body { display: grid; }
+.cal-body.day-view .cal-row { grid-template-columns: 1fr; }
+.cal-body.day-view .cal-head { display: none; } /* Hide 7-day header for day view? Or keep it? If we keep it, it doesn't match the 1 column. */
 .cal-row { display: grid; grid-template-columns: repeat(7, 1fr); }
+.cal-row.day-row { grid-template-columns: 1fr; }
 .cal-cell { box-sizing: border-box; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; padding: 8px 8px 6px; display: flex; flex-direction: column; gap: 6px; }
 .cal-cell:last-child { border-right: none; }
 .cal-row:last-child .cal-cell { border-bottom: none; }
@@ -27,16 +32,278 @@
 .out-month { background: #fafafa; color: #6b7280; }
 .day-header { display: flex; align-items: center; justify-content: space-between; }
 .day-num { font-weight: 600; }
+.day-name { font-weight: 600; font-size: 1.1em; color: #555; }
 .events { display: grid; gap: 6px; margin-top: 2px; flex: 1 1 auto; overflow: auto; }
 .event { padding: 6px 8px; border-radius: 8px; border: 1px solid #e5e7eb; cursor: pointer; }
 .event.period { background: #fde68a; }
 .event-title { font-size: 12px; font-weight: 600; }
 .event-time { font-size: 11px; color: #374151; }
 
+/* Year View Styles */
+.year-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 10px;
+}
+
+.mini-month {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-month-title {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.mini-cal-head {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 5px;
+}
+
+.mini-cal-cell-head {
+  text-align: center;
+  font-size: 0.8em;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.mini-cal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mini-cal-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.mini-cal-cell {
+  text-align: center;
+  padding: 4px;
+  font-size: 0.85em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mini-cal-cell:hover {
+  background-color: #f3f4f6;
+}
+
+.mini-cal-cell.today {
+  background-color: #eff6ff;
+  color: #2563eb;
+  font-weight: bold;
+}
+
+.mini-cal-cell.has-event {
+  font-weight: bold;
+  position: relative;
+}
+
+.mini-cal-cell.has-event::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #ef4444;
+}
+
+.mini-cal-cell.out-month {
+  color: #d1d5db;
+}
+
 @media (max-width: 900px) {
   .day-num { font-size: 12px; }
   .event-title { font-size: 11px; }
   .event-time { font-size: 10px; }
+}
+
+/* Time Grid View Styles */
+.time-grid-container {
+  display: flex;
+  flex-direction: column;
+  height: 700px; /* Fixed height for scroll */
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.time-grid-header {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.time-gutter-head {
+  width: 60px; /* Same as time-labels */
+  border-right: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.header-days {
+  display: grid;
+  flex: 1;
+  /* Columns set by inline style */
+}
+
+.header-day-cell {
+  text-align: center;
+  padding: 10px 0;
+  border-right: 1px solid #e5e7eb;
+}
+.header-day-cell:last-child { border-right: none; }
+
+.header-day-name {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.header-day-num {
+  font-size: 24px;
+  font-weight: 400;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  margin: 0 auto;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.header-day-num:hover {
+  background-color: #f3f4f6;
+}
+
+.header-day-num.today-num {
+  background-color: #1a73e8;
+  color: #fff;
+}
+
+.header-day-cell.today .header-day-name {
+  color: #1a73e8;
+}
+
+.scroll-gutter {
+  width: 9px; /* Approx scrollbar width */
+  border-left: 1px solid #e5e7eb;
+}
+
+.time-grid-body {
+  display: flex;
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+.time-labels {
+  width: 60px;
+  flex-shrink: 0;
+  border-right: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.time-label {
+  height: 50px; /* Match grid line height */
+  position: relative;
+  text-align: right;
+  padding-right: 8px;
+  color: #70757a;
+  font-size: 10px;
+}
+.time-label span {
+  position: relative;
+  top: -6px; /* Adjust vertical alignment */
+}
+
+.grid-content {
+  flex: 1;
+  position: relative;
+}
+
+.grid-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.grid-line {
+  height: 50px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.grid-line:first-child { border-top: 1px solid #e5e7eb; }
+
+.day-columns {
+  display: grid;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1200px; /* 24 * 50px */
+}
+
+.day-column {
+  border-right: 1px solid #e5e7eb;
+  position: relative;
+  height: 100%;
+}
+.day-column:last-child { border-right: none; }
+
+.click-layer {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.time-event {
+  position: absolute;
+  z-index: 2;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 11px;
+  overflow: hidden;
+  color: #3c4043;
+  border-left: 3px solid rgba(0,0,0,0.1);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.time-event:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  z-index: 3;
+}
+
+.time-event-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.time-event-time {
+  font-size: 10px;
+  opacity: 0.8;
 }
 
 
