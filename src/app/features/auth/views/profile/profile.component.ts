@@ -391,6 +391,8 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  // Reset password form
+
   resetPasswordForm() {
     this.passwordData = {
       currentPassword: '',
